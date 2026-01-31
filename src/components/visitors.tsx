@@ -1,4 +1,4 @@
-import React, { JSX, useCallback, useEffect, useRef, useState } from "react";
+import React, {useCallback, useEffect, useRef, useState } from "react";
 
 /**
  * VisitorsBook
@@ -19,7 +19,7 @@ const STORAGE_KEY = "visitors.signatures.v1";
 // amount of floating agents on screen (duplicates from saved signatures)
 const INITIAL_AGENTS = 18;
 
-export default function VisitorsBook(): JSX.Element {
+export default function VisitorsBook(){
   const bgRef = useRef<HTMLCanvasElement | null>(null); // animated background canvas
   const drawRef = useRef<HTMLCanvasElement | null>(null); // drawing canvas overlay for input
   const rafRef = useRef<number | null>(null);
