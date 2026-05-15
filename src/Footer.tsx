@@ -1,99 +1,85 @@
-import { Atom, Globe, Github, Linkedin, Mail } from "lucide-react";
+import { useEffect, useState } from 'react';
+import Magnetic from './components/Magnetic';
 
 export default function Footer() {
+  const [time, setTime] = useState('');
+
+  useEffect(() => {
+    const tick = () => {
+      const d = new Date();
+      const h = String(d.getUTCHours()).padStart(2, '0');
+      const m = String(d.getUTCMinutes()).padStart(2, '0');
+      setTime(`${h}:${m} UTC`);
+    };
+    tick();
+    const id = setInterval(tick, 60_000);
+    return () => clearInterval(id);
+  }, []);
+
   return (
-    <footer className="relative bg-gradient-to-b from-black via-neutral-900 to-black text-white overflow-hidden">
-      
-      {/* Subtle grid */}
-      <div
-        className="absolute inset-0 opacity-5 pointer-events-none"
-        style={{
-          backgroundImage: `linear-gradient(to right, #fff 1px, transparent 1px),
-                           linear-gradient(to bottom, #fff 1px, transparent 1px)`,
-          backgroundSize: '40px 40px',
-        }}
-      />
+    <footer className="relative bg-ink border-t border-bone/10 overflow-hidden scroll-skew">
+      {/* Giant name */}
+      <div className="px-5 md:px-10 pt-20 pb-8">
+        <div className="max-w-[1500px] mx-auto">
+          <a
+            href="#home"
+            data-cursor="Top"
+            className="block display text-[20vw] md:text-[16vw] leading-[0.8] text-bone hover:text-acid transition-colors duration-700 -tracking-[0.04em]"
+          >
+            Taran<span className="italic">.</span>
+          </a>
+        </div>
+      </div>
 
-      <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-14 md:py-10">
-        
-        {/* Top */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8 border-b border-white/10 pb-10 md:pb-8">
-          
-          {/* Identity */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Atom className="h-6 w-6 text-white" />
-              <span className="text-lg md:text-xl font-semibold tracking-wide">
-                Taran Matharu
-              </span>
+      <div className="px-5 md:px-10 pb-10 border-t border-bone/10">
+        <div className="max-w-[1500px] mx-auto pt-10 grid grid-cols-2 md:grid-cols-12 gap-y-10 md:gap-x-10">
+          <div className="col-span-2 md:col-span-4">
+            <div className="mono text-[10px] uppercase tracking-[0.3em] text-bone/40 mb-3">
+              Working from
             </div>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
-              Data Scientist & AI Engineer.  
-              Building analytical systems, machine learning models, and scalable data pipelines.
-            </p>
+            <div className="text-bone">Abbotsford, BC</div>
+            <div className="text-bone/50 mono text-xs mt-1">{time}</div>
           </div>
 
-          {/* Navigation */}
-          <div>
-            <h4 className="text-white font-semibold mb-4 text-xs uppercase tracking-widest">
+          <div className="col-span-1 md:col-span-3">
+            <div className="mono text-[10px] uppercase tracking-[0.3em] text-bone/40 mb-3">
               Navigate
-            </h4>
-            <ul className="space-y-3 text-gray-400 text-sm">
-              <li><a href="#about" className="hover:text-white transition-colors">About</a></li>
-              <li><a href="#projects" className="hover:text-white transition-colors">Projects</a></li>
-              <li><a href="#process" className="hover:text-white transition-colors">Workflow</a></li>
-              <li><a href="#contact" className="hover:text-white transition-colors">Contact</a></li>
+            </div>
+            <ul className="space-y-2 text-bone/80">
+              <li><a href="#about" className="hover:text-acid transition-colors">About</a></li>
+              <li><a href="#skills" className="hover:text-acid transition-colors">Skills</a></li>
+              <li><a href="#process" className="hover:text-acid transition-colors">Process</a></li>
+              <li><a href="#projects" className="hover:text-acid transition-colors">Work</a></li>
             </ul>
           </div>
 
-          {/* Links */}
-          <div>
-            <h4 className="text-white font-semibold mb-4 text-xs uppercase tracking-widest">
+          <div className="col-span-1 md:col-span-3">
+            <div className="mono text-[10px] uppercase tracking-[0.3em] text-bone/40 mb-3">
               Connect
-            </h4>
-            <ul className="space-y-4 text-gray-400 text-sm">
-              <li className="flex items-center space-x-3">
-                <Github className="h-4 w-4" />
-                <a
-                  href="https://github.com/ProudStone-576"
-                  target="_blank"
-                  className="hover:text-white transition-colors"
-                >
-                  GitHub
-                </a>
-              </li>
-              <li className="flex items-center space-x-3">
-                <Linkedin className="h-4 w-4" />
-                <a
-                  href="https://linkedin.com/in/taran-matharu-/"
-                  target="_blank"
-                  className="hover:text-white transition-colors"
-                >
-                  LinkedIn
-                </a>
-              </li>
-              <li className="flex items-center space-x-3">
-                <Mail className="h-4 w-4" />
-                <a
-                  href="mailto:taranjeetsinghmatharu15@gmail.com"
-                  className="hover:text-white transition-colors break-all sm:break-normal"
-                >
-                  Email
-                </a>
-              </li>
+            </div>
+            <ul className="space-y-2 text-bone/80">
+              <li><a href="https://github.com/ProudStone-576" target="_blank" data-cursor="GitHub" className="hover:text-acid transition-colors">GitHub ↗</a></li>
+              <li><a href="https://linkedin.com/in/taran-matharu-/" target="_blank" data-cursor="LinkedIn" className="hover:text-acid transition-colors">LinkedIn ↗</a></li>
+              <li><a href="mailto:taranjeetsinghmatharu15@gmail.com" data-cursor="Mail" className="hover:text-acid transition-colors">Email ↗</a></li>
             </ul>
+          </div>
+
+          <div className="col-span-2 md:col-span-2 md:text-right">
+            <Magnetic>
+              <a
+                href="#contact"
+                data-cursor="Talk"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-acid text-ink mono text-xs uppercase tracking-widest font-bold rounded-full"
+              >
+                Let's Talk
+              </a>
+            </Magnetic>
           </div>
         </div>
 
-        {/* Bottom */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-8 gap-4 text-xs text-gray-500">
-          <p>
-            © {new Date().getFullYear()} Taran Matharu. All rights reserved.
-          </p>
-          <div className="flex items-center space-x-2">
-            <Globe className="h-4 w-4" />
-            <span>Built on the internet. Runs everywhere.</span>
-          </div>
+        <div className="max-w-[1500px] mx-auto mt-16 pt-6 border-t border-bone/10 flex flex-col md:flex-row justify-between gap-4 mono text-[10px] uppercase tracking-widest text-bone/40">
+          <span>© {new Date().getFullYear()} Taran Matharu — Built with restraint.</span>
+          <span>v2.0 · Engineered, not assembled.</span>
         </div>
       </div>
     </footer>

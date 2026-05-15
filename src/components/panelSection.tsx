@@ -1,7 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-python';
 import 'prismjs/components/prism-sql';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const codeSnippets = {
   PYTHON: `import pandas as pd
@@ -14,193 +18,181 @@ y = data["target"]
 model = RandomForestClassifier(n_estimators=200)
 model.fit(X, y)
 
-print("Model Accuracy:", model.score(X, y))`,
+print("Accuracy:", model.score(X, y))`,
 
   SQL: `SELECT user_id,
        COUNT(session_id) AS sessions,
-       AVG(duration) AS avg_time
-FROM user_sessions
-GROUP BY user_id
-ORDER BY sessions DESC;`,
+       AVG(duration)     AS avg_time
+FROM   user_sessions
+WHERE  created_at > NOW() - INTERVAL '30 days'
+GROUP  BY user_id
+ORDER  BY sessions DESC
+LIMIT  50;`,
 
   PIPELINE: `def preprocess(df):
     df = df.dropna()
     df["ratio"] = df["sales"] / df["visits"]
     return df
 
-clean_data = preprocess(raw_data)
-train_model(clean_data)`
+clean = preprocess(raw_data)
+train_model(clean)`,
 };
 
-const langMap = {
+const langMap: Record<string, string> = {
   PYTHON: 'python',
   SQL: 'sql',
   PIPELINE: 'python',
 };
 
-const TYPING_SPEED = 28;
+const SPEED = 18;
 
-export default function TypingCodePanel() {
-  const [activeTab, setActiveTab] = useState<'PYTHON' | 'SQL' | 'PIPELINE'>('PYTHON');
-  const [typedText, setTypedText] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
+export default function CodePanel() {
+  const root = useRef<HTMLElement>(null);
+  const [tab, setTab] = useState<keyof typeof codeSnippets>('PYTHON');
+  const [typed, setTyped] = useState('');
+  const [typing, setTyping] = useState(false);
 
   useEffect(() => {
-    let index = 0;
-    const code = codeSnippets[activeTab];
-    setTypedText('');
-    setIsTyping(true);
-
-    const interval = setInterval(() => {
-      if (index <= code.length) {
-        setTypedText(code.slice(0, index));
-        index++;
+    let i = 0;
+    const code = codeSnippets[tab];
+    setTyped('');
+    setTyping(true);
+    const id = setInterval(() => {
+      if (i <= code.length) {
+        setTyped(code.slice(0, i));
+        i++;
       } else {
-        clearInterval(interval);
-        setIsTyping(false);
+        clearInterval(id);
+        setTyping(false);
       }
-    }, TYPING_SPEED);
+    }, SPEED);
+    return () => clearInterval(id);
+  }, [tab]);
 
-    return () => clearInterval(interval);
-  }, [activeTab]);
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from('[data-code-panel]', {
+        y: 80,
+        opacity: 0,
+        duration: 1.1,
+        ease: 'expo.out',
+        scrollTrigger: { trigger: '[data-code-panel]', start: 'top 80%' },
+      });
+    }, root);
+    return () => ctx.revert();
+  }, []);
 
-  const highlightedCode = Prism.highlight(
-    typedText,
-    Prism.languages[langMap[activeTab]] || Prism.languages.plaintext,
-    langMap[activeTab]
+  const html = Prism.highlight(
+    typed,
+    Prism.languages[langMap[tab]] || Prism.languages.plaintext,
+    langMap[tab]
   );
 
   return (
-    <div className="relative w-full min-h-screen flex justify-center items-center bg-black overflow-hidden p-4 sm:p-4">
-
-      {/* Background Grid — hidden on mobile only */}
-      <div
-        className="absolute inset-0 opacity-5 pointer-events-none hidden sm:block"
-        style={{
-          backgroundImage: `linear-gradient(to right, #fff 1px, transparent 1px),
-                           linear-gradient(to bottom, #fff 1px, transparent 1px)`,
-          backgroundSize: '40px 40px',
-        }}
-      />
-
-      {/* Decorative Boxes — hidden on mobile only */}
-      <div className="absolute inset-0 justify-center items-center hidden sm:flex">
-        <div className="grid grid-cols-4 gap-8 w-full max-w-6xl h-[80vh]">
-          {[...Array(12)].map((_, i) => (
-            <div key={i} className="border border-white/5 rounded-lg" />
-          ))}
-        </div>
-      </div>
-
-      {/* Main Panel */}
-      <div
-        className="
-          relative z-10
-          flex flex-col lg:flex-row
-          w-full max-w-6xl
-          min-h-[80vh] sm:min-h-[80vh]
-          bg-black border border-white/10
-          rounded-xl shadow-2xl overflow-hidden
-        "
-      >
-
-        {/* Code Section */}
-        <div
-          className="
-            w-full lg:w-3/5
-            p-4 sm:p-6 md:p-8
-            font-mono text-sm md:text-base
-            overflow-visible sm:overflow-y-auto
-          "
-        >
-          {/* Tabs — scrollable on mobile only */}
-          <div className="flex space-x-4 mb-6 overflow-x-auto sm:overflow-visible">
-            {Object.keys(codeSnippets).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab as never)}
-                className={`shrink-0 px-4 sm:px-5 py-2 rounded-lg font-medium transition ${
-                  activeTab === tab
-                    ? 'bg-white text-black'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-
-          <pre className="whitespace-pre-wrap leading-relaxed px-3 sm:px-4 py-4 min-h-[40vh] sm:min-h-[60vh]">
-            <code
-              className={`language-${langMap[activeTab]}`}
-              dangerouslySetInnerHTML={{ __html: highlightedCode }}
-            />
-            {isTyping && <span className="ml-1 animate-pulse text-white">▋</span>}
-          </pre>
-        </div>
-
-        {/* Divider — unchanged */}
-        <div className="w-px bg-white/10 hidden lg:block" />
-
-        {/* Info Panel */}
-        <div
-          className="
-            w-full lg:w-2/5
-            p-6 sm:p-8
-            flex flex-col justify-center
-            border-t border-white/10 lg:border-t-0
-          "
-        >
-          <div className="mb-6 sm:mb-8">
-            <div className="w-12 h-1 bg-white mb-4 rounded" />
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4 leading-tight">
-              Data. Models. Systems.
-              <br />
-              <span className="text-gray-400">Engineering Intelligence</span>
+    <section
+      ref={root}
+      id="code"
+      className="relative py-32 md:py-44 px-5 md:px-10 bg-ink overflow-hidden border-t border-bone/5"
+    >
+      <div className="max-w-[1500px] mx-auto scroll-skew">
+        <div className="grid grid-cols-12 gap-y-12 md:gap-x-10 mb-12 md:mb-16">
+          <div className="col-span-12 md:col-span-7">
+            <div className="mono text-[10px] uppercase tracking-[0.4em] text-acid mb-4">
+              ◉ 06 — Live Code
+            </div>
+            <h2 className="display text-5xl md:text-7xl text-bone leading-[0.95]">
+              Real workflows, <span className="italic">not tutorials.</span>
             </h2>
-            <p className="text-gray-400 mb-6 leading-relaxed text-sm sm:text-base">
-              Real workflows: machine learning models, analytical queries,
-              and automated data pipelines. Code reflects production logic,
-              not tutorials.
+          </div>
+          <div className="col-span-12 md:col-span-4 md:col-start-9 self-end">
+            <p className="text-bone/70 leading-relaxed">
+              Snippets reflect production logic — model training, analytical queries, and pipeline preprocessing. Switch tabs to see them write themselves.
             </p>
           </div>
+        </div>
 
-          <div className="space-y-3 sm:space-y-4">
-            <a
-              href="https://github.com/ProudStone-576"
-              className="block w-full bg-white text-black font-semibold py-3 rounded-lg text-center"
-            >
-              View GitHub
-            </a>
+        <div
+          data-code-panel
+          className="grid grid-cols-1 lg:grid-cols-12 gap-px bg-bone/10 border border-bone/10 rounded-3xl overflow-hidden"
+        >
+          {/* Code area */}
+          <div className="lg:col-span-8 bg-ink p-6 md:p-10 min-h-[480px] md:min-h-[560px] flex flex-col">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-bone/10">
+              <div className="flex items-center gap-3">
+                <div className="flex gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-bone/20" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-bone/20" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-acid" />
+                </div>
+                <span className="mono text-[10px] uppercase tracking-widest text-bone/40">
+                  ~/taran/{tab.toLowerCase()}.{langMap[tab] === 'sql' ? 'sql' : 'py'}
+                </span>
+              </div>
+              <div className="flex gap-2">
+                {(Object.keys(codeSnippets) as Array<keyof typeof codeSnippets>).map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setTab(t)}
+                    data-cursor="Run"
+                    className={`mono text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-full border transition-colors ${
+                      tab === t
+                        ? 'bg-acid text-ink border-acid'
+                        : 'border-bone/20 text-bone/60 hover:border-bone'
+                    }`}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-            <a
-              href="src\assets\Taran_Matharu_resume.pdf"
-              className="block w-full border border-white/20 text-white font-semibold py-3 rounded-lg text-center"
-            >
-              Download Resume
-            </a>
+            <pre className="mono text-sm md:text-[15px] leading-relaxed flex-1 overflow-auto whitespace-pre-wrap">
+              <code
+                className={`language-${langMap[tab]}`}
+                dangerouslySetInnerHTML={{ __html: html }}
+                style={{ color: '#e7e3da' }}
+              />
+              {typing && <span className="inline-block w-2 h-4 ml-0.5 bg-acid align-middle animate-pulse" />}
+            </pre>
           </div>
 
-          <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-white/10">
-            <div className="flex flex-wrap gap-2 sm:space-x-4 text-gray-500 text-sm select-none">
-              <span>ML Models</span>
-              <span>•</span>
-              <span>Data Pipelines</span>
-              <span>•</span>
-              <span>Automation</span>
+          {/* Side */}
+          <div className="lg:col-span-4 bg-ink p-6 md:p-10 flex flex-col justify-between">
+            <div>
+              <div className="mono text-[10px] uppercase tracking-widest text-bone/40 mb-4">
+                Stack
+              </div>
+              <ul className="space-y-3 text-bone/80">
+                {['ML / Statistical Modeling', 'Production Pipelines', 'Service Integration', 'Monitoring & Drift'].map((s) => (
+                  <li key={s} className="flex items-center gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-acid" />
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="space-y-3 mt-10">
+              <a
+                href="https://github.com/ProudStone-576"
+                target="_blank"
+                data-cursor="GitHub"
+                className="block w-full text-center bg-bone text-ink mono text-xs uppercase tracking-widest font-bold py-4 rounded-full hover:bg-acid transition-colors"
+              >
+                Browse Repos ↗
+              </a>
+              <a
+                href="/Taran_Matharu_resume.pdf"
+                target="_blank"
+                data-cursor="PDF"
+                className="block w-full text-center mono text-xs uppercase tracking-widest border border-bone/20 py-4 rounded-full hover:border-acid hover:text-acid transition-colors"
+              >
+                Download Resume
+              </a>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Scrollbar — unchanged */}
-      <style>{`
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-thumb {
-          background: rgba(255,255,255,0.2);
-          border-radius: 4px;
-        }
-      `}</style>
-    </div>
+    </section>
   );
 }

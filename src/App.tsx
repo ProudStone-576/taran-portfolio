@@ -1,69 +1,52 @@
-import Navbar from "./components/navbar";
-import Footer from "./Footer";
-import SplineScene from "./components/SplineScene";
-import ServicesWithCube from "./components/service";
-import TypingCodePanel from "./components/panelSection";
-import ProcessSection from "./components/processSet";
-import AboutSection from "./components/About";
-import ContactUs from "./components/contact";
-import VisitorsBook from "./components/visitors";
-import ProjectsSection from "./components/ProjectShowcase";
+import Navbar from './components/navbar';
+import Footer from './Footer';
+import SmoothScroll from './components/SmoothScroll';
+import Cursor from './components/Cursor';
+import Loader from './components/Loader';
+import Hero from './components/Hero';
+import MarqueeStrip from './components/MarqueeStrip';
+import About from './components/About';
+import Skills from './components/Skills';
+import Process from './components/Process';
+import CodePanel from './components/panelSection';
+import ProjectsSection from './components/ProjectShowcase';
+import Contact from './components/contact';
+import Interlude from './components/Interlude';
+import ScrollHUD from './components/ChromaticScroll';
 
 function App() {
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="relative bg-ink text-bone grain">
+      <SmoothScroll />
+      <Loader />
+      <Cursor />
       <Navbar />
+      <ScrollHUD />
 
-      <main className="pt-20 space-y-24 md:space-y-32">
-        {/* Hero */}
-        <section
-          id="home"
-          className="min-h-screen flex items-center justify-center"
-        >
-          <SplineScene />
-        </section>
+      <main>
+        <Hero />
+        <MarqueeStrip />
+        <About />
 
-        {/* About */}
-        <section id="about" className="px-4 md:px-12">
-          <AboutSection />
-        </section>
+        <Interlude
+          chapter="03"
+          title="Method."
+          subtitle="Most analysis predicts outcomes. I isolate mechanisms — separate triggers from amplifiers, construct causal graphs, test counterfactual scenarios."
+        />
 
-        {/* Services */}
-        <section
-          id="services"
-          className="min-h-screen flex items-center justify-center px-4 md:px-12"
-        >
-          <ServicesWithCube />
-        </section>
+        <Skills />
+        <Process />
 
-        {/* Process */}
-        <section id="process" className="px-4 md:px-12">
-          <ProcessSection />
-        </section>
+        <Interlude
+          chapter="05"
+          title="Proof."
+          subtitle="Six selected projects. Each chosen for what it proves about how I think — not for quantity."
+          invert
+        />
 
-        {/* Projects */}
-        <section id="projects" className="px-4 md:px-12">
-          <TypingCodePanel />
-        </section>
-
-         {/* Projects */}
-        <section id="projects" className="px-4 md:px-12">
-          <ProjectsSection/>
-        </section>
-
-
-        {/* Visitors */}
-        <section id="visitors" className="px-4 md:px-12 pb-24">
-          <VisitorsBook />
-        </section>
-
-        {/* Contact */}
-        <section
-          id="contact"
-          className="min-h-screen flex items-center justify-center px-4 md:px-12"
-        >
-          <ContactUs />
-        </section>
+        <ProjectsSection />
+        <CodePanel />
+        <Contact />
       </main>
 
       <Footer />

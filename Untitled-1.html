@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taran - Space Journey Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            height: 100vh;
+            background: #000000;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            color: white;
+        }
+
+        #canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .header {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            pointer-events: auto;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            letter-spacing: 8px;
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .header .tagline {
+            font-size: 1.1em;
+            color: #aaaaaa;
+            letter-spacing: 3px;
+        }
+
+        .nav-controls {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            pointer-events: auto;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 15px 30px;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .planet-info {
+            position: absolute;
+            top: 50%;
+            right: 60px;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            max-width: 400px;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: auto;
+        }
+
+        .planet-info.visible {
+            opacity: 1;
+        }
+
+        .planet-info h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+            letter-spacing: 3px;
+        }
+
+        .planet-info .planet-type {
+            color: #888;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        .planet-info p {
+            line-height: 1.8;
+            color: #cccccc;
+            margin-bottom: 20px;
+        }
+
+        .planet-info .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .tech-tag {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 5px 12px;
+            font-size: 0.85em;
+            letter-spacing: 1px;
+        }
+
+        .progress {
+            position: absolute;
+            bottom: 40px;
+            right: 60px;
+            display: flex;
+            gap: 10px;
+            pointer-events: auto;
+        }
+
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .progress-dot.active {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: white;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+        }
+
+        .travel-status {
+            position: absolute;
+            top: 40px;
+            left: 60px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            font-size: 0.9em;
+        }
+
+        .travel-status div {
+            margin: 8px 0;
+            letter-spacing: 1px;
+        }
+
+        .status-label {
+            color: #888;
+            display: inline-block;
+            width: 120px;
+        }
+
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5em;
+            letter-spacing: 3px;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .instructions {
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            letter-spacing: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2em; }
+            .planet-info {
+                right: 20px;
+                left: 20px;
+                max-width: calc(100% - 40px);
+            }
+            .travel-status {
+                left: 20px;
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    
+    <div class="loading" id="loading">INITIALIZING JOURNEY...</div>
+    
+    <div class="ui-overlay">
+        <div class="header">
+            <h1>TARAN</h1>
+            <div class="tagline">DATA ANALYST • BUSINESS INTELLIGENCE</div>
+        </div>
+
+        <div class="travel-status">
+            <div><span class="status-label">DESTINATION:</span><span id="destination">Sun</span></div>
+            <div><span class="status-label">DISTANCE:</span><span id="distance">0 AU</span></div>
+            <div><span class="status-label">STATUS:</span><span id="status">IN ORBIT</span></div>
+        </div>
+
+        <div class="planet-info" id="planetInfo">
+            <h2 id="planetName">The Sun</h2>
+            <div class="planet-type" id="planetType">HOME BASE</div>
+            <p id="planetDesc">Welcome to my portfolio journey through the solar system. Each planet represents a different project or skill area. Board the ship and navigate between planets to explore my work.</p>
+            <div class="tech-stack" id="techStack"></div>
+        </div>
+
+        <div class="nav-controls">
+            <button class="nav-btn" id="prevBtn">◄ PREVIOUS</button>
+            <button class="nav-btn" id="nextBtn">NEXT ►</button>
+        </div>
+
+        <div class="progress" id="progress"></div>
+
+        <div class="instructions">
+            USE MOUSE TO LOOK AROUND • CLICK PLANETS OR USE NAVIGATION
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // === TEXTURE GENERATION FUNCTIONS ===
+        
+        function createSunTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            
+            const gradient = ctx.createRadialGradient(512, 256, 0, 512, 256, 512);
+            gradient.addColorStop(0, '#FFF4E0');
+            gradient.addColorStop(0.3, '#FFD700');
+            gradient.addColorStop(0.6, '#FF8C00');
+            gradient.addColorStop(1, '#FF4500');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 1024, 512);
+            
+            for (let i = 0; i < 200; i++) {
+                const x = Math.random() * 1024;
+                const y = Math.random() * 512;
+                const radius = Math.random() * 40 + 10;
+                const flareGradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+                flareGradient.addColorStop(0, 'rgba(255, 255, 200, 0.8)');
+                flareGradient.addColorStop(1, 'rgba(255, 140, 0, 0)');
+                ctx.fillStyle = flareGradient;
+                ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+            }
+            
+            return new THREE.CanvasTexture(canvas);
+        }
+        
+        function createMercuryTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = '#8C7853';
+            ctx.fillRect(0, 0, 1024, 512);
+            
+            for (let i = 0; i < 300; i++) {
+                const x = Math.random() * 1024;
+                const y = Math.random() * 512;
+                const radius = Math.random() * 20 + 5;
+                const craterGradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+                craterGradient.addColorStop(0, '#6B5D47');
+                craterGradient.addColorStop(0.7, '#8C7853');
+                craterGradient.addColorStop(1, '#A89968');
+                ctx.fillStyle = craterGradient;
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            return new THREE.CanvasTexture(canvas);
+        }
+        
+        function createVenusTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            
+            const gradient = ctx.createLinearGradient(0, 0, 1024, 512);
+            gradient.addColorStop(0, '#FFC649');
+            gradient.addColorStop(0.5, '#FFD98E');
+            gradient.addColorStop(1, '#FFB020');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 1024, 512);
+            
+            for (let i = 0; i < 50; i++) {
+                const x = Math.random() * 1024;
+                const y = Math.random() * 512;
+                const width = Math.random() * 200 + 100;
+                const height = Math.random() * 30 + 10;
+                ctx.fillStyle = `rgba(255, 230, 150, ${Math.random() * 0.3})`;
+                ctx.fillRect(x, y, width, height);
+            }
+            
+            return new THREE.CanvasTexture(canvas);
+        }
+        
+        function createEarthTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = '#0B3D91';
+            ctx.fillRect(0, 0, 1024, 512);
+            
+            for (let i = 0; i < 30; i++) {
+                const x = Math.random() * 1024;
+                const y = Math.random() * 512;
+                const width = Math.random() * 200 + 50;
+                const height = Math.random() * 150 + 30;
+                ctx.fillStyle = Math.random() > 0.5 ? '#2D5016' : '#8B7355';
+                ctx.beginPath();
+                ctx.ellipse(x, y, width/2, height/2, Math.random() * Math.PI, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            for (let i = 0; i < 100; i++) {
+                const x = Math.random() * 1024;
+                const y = Math.random() * 512;
+                const radius = Math.random() * 30 + 10;
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.3})`;
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            return new THREE.CanvasTexture(canvas);
+        }
+        
+        function createMarsTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = '#CD5C5C';
+            ctx.fillRect(0, 0, 1024, 512);
+            
+            for (let i = 0; i < 80; i++) {
+                const x = Math.random() * 1024;
+                const y = Math.random() * 512;
+                const width = Math.random() * 150 + 50;
+                const height = Math.random() * 100 + 30;
+                ctx.fillStyle = '#A0522D';
+                ctx.fillRect(x, y, width, height);
+            }
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.fillRect(0, 0, 1024, 40);
+            ctx.fillRect(0, 472, 1024, 40);
+            
+            return new THREE.CanvasTexture(canvas);
+        }
+        
+        function createJupiterTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            
+            const colors = ['#C88B3A', '#E0AC69', '#8B6F47', '#DEB887', '#CD853F'];
+            const bandHeight = 512 / 15;
+            
+            for (let i = 0; i < 15; i++) {
+                ctx.fillStyle = colors[i % colors.length];
+                ctx.fillRect(0, i * bandHeight, 1024, bandHeight);
+            }
+            
+            const grsGradient = ctx.createRadialGradient(300, 256, 0, 300, 256, 80);
+            grsGradient.addColorStop(0, '#E07041');
+            grsGradient.addColorStop(0.5, '#C85A3C');
+            grsGradient.addColorStop(1, '#A0522D');
+            ctx.fillStyle = grsGradient;
+            ctx.beginPath();
+            ctx.ellipse(300, 256, 80, 60, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            for (let i = 0; i < 100; i++) {
+                const x = Math.random() * 1024;
+                const y = Math.random() * 512;
+                ctx.fillStyle = `rgba(200, 150, 80, ${Math.random() * 0.3})`;
+                ctx.fillRect(x, y, Math.random() * 50 + 20, Math.random() * 10 + 5);
+            }
+            
+            return new THREE.CanvasTexture(canvas);
+        }
+        
+        function createSaturnTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            
+            const colors = ['#FAD5A5', '#F5DEB3', '#E8D5B7', '#DEB887'];
+            const bandHeight = 512 / 12;
+            
+            for (let i = 0; i < 12; i++) {
+                ctx.fillStyle = colors[i % colors.length];
+                ctx.fillRect(0, i * bandHeight, 1024, bandHeight);
+            }
+            
+            for (let i = 0; i < 80; i++) {
+                const x = Math.random() * 1024;
+                const y = Math.random() * 512;
+                ctx.fillStyle = `rgba(220, 200, 150, ${Math.random() * 0.2})`;
+                ctx.fillRect(x, y, Math.random() * 100 + 50, Math.random() * 15 + 5);
+            }
+            
+            return new THREE.CanvasTexture(canvas);
+        }
+        
+        function createUranusTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            
+            const gradient = ctx.createLinearGradient(0, 0, 0, 512);
+            gradient.addColorStop(0, '#7FFFD4');
+            gradient.addColorStop(0.5, '#4FD0E0');
+            gradient.addColorStop(1, '#00CED1');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 1024, 512);
+            
+            for (let i = 0; i < 8; i++) {
+                const y = i * 64;
+                ctx.fillStyle = `rgba(100, 200, 220, ${Math.random() * 0.2})`;
+                ctx.fillRect(0, y, 1024, 64);
+            }
+            
+            return new THREE.CanvasTexture(canvas);
+        }
+        
+        function createNeptuneTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            
+            const gradient = ctx.createLinearGradient(0, 0, 0, 512);
+            gradient.addColorStop(0, '#5B7DB1');
+            gradient.addColorStop(0.5, '#4169E1');
+            gradient.addColorStop(1, '#0047AB');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 1024, 512);
+            
+            for (let i = 0; i < 5; i++) {
+                const x = Math.random() * 1024;
+                const y = Math.random() * 512;
+                const spotGradient = ctx.createRadialGradient(x, y, 0, x, y, 60);
+                spotGradient.addColorStop(0, '#000080');
+                spotGradient.addColorStop(1, 'rgba(0, 0, 128, 0)');
+                ctx.fillStyle = spotGradient;
+                ctx.beginPath();
+                ctx.arc(x, y, 60, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            return new THREE.CanvasTexture(canvas);
+        }
+        
+        function createPlutoTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = '#A0826D';
+            ctx.fillRect(0, 0, 512, 256);
+            
+            for (let i = 0; i < 40; i++) {
+                const x = Math.random() * 512;
+                const y = Math.random() * 256;
+                const radius = Math.random() * 30 + 10;
+                ctx.fillStyle = Math.random() > 0.5 ? '#C4A68A' : '#8B7355';
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            ctx.fillStyle = '#E8D5B7';
+            ctx.beginPath();
+            ctx.arc(256, 128, 50, 0, Math.PI * 2);
+            ctx.fill();
+            
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        // === PLANETS DATA ===
+       const planetsData = [
+{
+    name: 'The Sun',
+    type: 'CORE INTELLIGENCE',
+    description: 'My applied intelligence stack. I design systems that transform raw data into learning machines — from preprocessing to deployed models. Moving outward increases abstraction and complexity.',
+    size: 30,
+    distance: 0,
+    textureGenerator: createSunTexture,
+    emissiveIntensity: 1,
+    tech: ['Python','Mathematics','Problem Solving','System Design']
+},
+{
+    name: 'Mercury',
+    type: 'DATA PROCESSING',
+    description: 'Data ingestion, cleaning, transformation, and feature engineering. The layer where noise becomes structured signal usable by algorithms.',
+    size: 8,
+    distance: 120,
+    textureGenerator: createMercuryTexture,
+    emissiveIntensity: 0.1,
+    tech: ['Python','Pandas','NumPy','SQL']
+},
+{
+    name: 'Venus',
+    type: 'ANALYSIS & VISUALIZATION',
+    description: 'Exploratory analysis and statistical reasoning used to uncover structure and relationships before modeling.',
+    size: 14,
+    distance: 200,
+    textureGenerator: createVenusTexture,
+    emissiveIntensity: 0.2,
+    tech: ['Matplotlib','Seaborn','Plotly','Statistics']
+},
+{
+    name: 'Earth',
+    type: 'MACHINE LEARNING',
+    description: 'Supervised and unsupervised learning systems for classification, regression, and clustering on real datasets.',
+    size: 15,
+    distance: 300,
+    textureGenerator: createEarthTexture,
+    emissiveIntensity: 0.15,
+    tech: ['Scikit-learn','XGBoost','Feature Engineering','Model Evaluation']
+},
+{
+    name: 'Mars',
+    type: 'TEMPORAL MODELING',
+    description: 'Forecasting and sequence modeling capturing behavior over time in dynamic systems.',
+    size: 12,
+    distance: 400,
+    textureGenerator: createMarsTexture,
+    emissiveIntensity: 0.12,
+    tech: ['Time Series','Prophet','ARIMA','Sequence Features']
+},
+{
+    name: 'Jupiter',
+    type: 'DEEP LEARNING',
+    description: 'Neural networks extracting high dimensional representations and complex nonlinear relationships.',
+    size: 35,
+    distance: 550,
+    textureGenerator: createJupiterTexture,
+    emissiveIntensity: 0.18,
+    tech: ['PyTorch','CNN','Training Pipelines','Optimization']
+},
+{
+    name: 'Saturn',
+    type: 'PERCEPTION SYSTEMS',
+    description: 'Language understanding and semantic modeling using modern representation learning architectures.',
+    size: 30,
+    distance: 700,
+    textureGenerator: createSaturnTexture,
+    emissiveIntensity: 0.16,
+    hasRings: true,
+    tech: ['Transformers','Embeddings','Tokenization','NLP']
+},
+{
+    name: 'Uranus',
+    type: 'COMPUTER VISION',
+    description: 'Learning spatial representations from images and visual signals.',
+    size: 20,
+    distance: 850,
+    textureGenerator: createUranusTexture,
+    emissiveIntensity: 0.2,
+    tech: ['OpenCV','Image Models','Feature Maps','Detection']
+},
+{
+    name: 'Neptune',
+    type: 'SPATIOTEMPORAL LEARNING',
+    description: 'Modeling patterns across space and time using deep learning. Includes NASA Spatiotemporal Deep Learning research project.',
+    size: 19,
+    distance: 1000,
+    textureGenerator: createNeptuneTexture,
+    emissiveIntensity: 0.17,
+    tech: ['PyTorch','Sequence Models','Spatial Data','Scientific ML']
+},
+{
+    name: 'Pluto',
+    type: 'FOUNDATIONS',
+    description: 'Mathematics and algorithmic reasoning underlying every system I build.',
+    size: 6,
+    distance: 1150,
+    textureGenerator: createPlutoTexture,
+    emissiveIntensity: 0.08,
+    tech: ['Linear Algebra','Probability','Optimization','Algorithms']
+}
+];
+
+
+        // === SCENE SETUP ===
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x000000);
+        scene.fog = new THREE.Fog(0x000000, 800, 2500);
+
+        const canvas = document.getElementById('canvas');
+        const camera = new THREE.PerspectiveCamera(
+            60,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            5000
+        );
+        camera.position.set(0, 100, 200);
+
+        const renderer = new THREE.WebGLRenderer({
+            canvas: canvas,
+            antialias: true,
+            alpha: false
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // === LIGHTING ===
+        const ambientLight = new THREE.AmbientLight(0x222222, 0.3);
+        scene.add(ambientLight);
+
+        const sunLight = new THREE.PointLight(0xFFFFFF, 3, 3000);
+        sunLight.position.set(0, 0, 0);
+        scene.add(sunLight);
+
+        // === STARFIELD ===
+        const starsGeometry = new THREE.BufferGeometry();
+        const starVertices = [];
+        const starColors = [];
+        
+        for (let i = 0; i < 15000; i++) {
+            const x = (Math.random() - 0.5) * 5000;
+            const y = (Math.random() - 0.5) * 5000;
+            const z = (Math.random() - 0.5) * 5000;
+            starVertices.push(x, y, z);
+            
+            const brightness = 0.7 + Math.random() * 0.3;
+            starColors.push(brightness, brightness, brightness);
+        }
+        
+        starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+        starsGeometry.setAttribute('color', new THREE.Float32BufferAttribute(starColors, 3));
+        
+        const starsMaterial = new THREE.PointsMaterial({ 
+            size: 2,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.9
+        });
+        const stars = new THREE.Points(starsGeometry, starsMaterial);
+        scene.add(stars);
+
+        // === CREATE PLANETS ===
+        const planets = [];
+        const planetMeshes = [];
+
+        planetsData.forEach((data, index) => {
+            const geometry = new THREE.SphereGeometry(data.size, 64, 64);
+            const texture = data.textureGenerator();
+            
+            const material = new THREE.MeshStandardMaterial({
+                map: texture,
+                emissive: 0xFFFFFF,
+                emissiveMap: texture,
+                emissiveIntensity: data.emissiveIntensity,
+                metalness: 0.1,
+                roughness: 0.8
+            });
+            
+            const planet = new THREE.Mesh(geometry, material);
+            
+            if (data.distance === 0) {
+                planet.position.set(0, 0, 0);
+            } else {
+                const angle = (index / (planetsData.length - 1)) * Math.PI * 2;
+                planet.position.set(
+                    Math.cos(angle) * data.distance,
+                    0,
+                    Math.sin(angle) * data.distance
+                );
+            }
+            
+            scene.add(planet);
+            planetMeshes.push(planet);
+            
+            if (data.hasRings) {
+                const ringGeometry = new THREE.RingGeometry(data.size * 1.5, data.size * 2.5, 64);
+                const ringMaterial = new THREE.MeshStandardMaterial({
+                    color: 0xC9B58A,
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: 0.8,
+                    metalness: 0.3,
+                    roughness: 0.7
+                });
+                const rings = new THREE.Mesh(ringGeometry, ringMaterial);
+                rings.rotation.x = Math.PI / 2;
+                planet.add(rings);
+            }
+            
+            if (data.name !== 'The Sun') {
+                const glowGeometry = new THREE.SphereGeometry(data.size * 1.15, 32, 32);
+                const glowMaterial = new THREE.MeshBasicMaterial({
+                    color: 0xFFFFFF,
+                    transparent: true,
+                    opacity: 0.05,
+                    side: THREE.BackSide
+                });
+                const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+                planet.add(glow);
+            }
+            
+            if (data.distance > 0) {
+                const orbitGeometry = new THREE.RingGeometry(data.distance - 1, data.distance + 1, 128);
+                const orbitMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x333333,
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: 0.08
+                });
+                const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
+                orbit.rotation.x = Math.PI / 2;
+                scene.add(orbit);
+            }
+            
+            planets.push({
+                mesh: planet,
+                data: data,
+                rotationSpeed: 0.001 + Math.random() * 0.002
+            });
+        });
+
+        // === MILLENNIUM FALCON STYLE SPACESHIP ===
+        const shipGroup = new THREE.Group();
+        
+        // Create ship texture with panel details
+        function createShipTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = '#B8B8B0';
+            ctx.fillRect(0, 0, 512, 512);
+            
+            ctx.strokeStyle = '#4A4A42';
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 30; i++) {
+                const x = Math.random() * 512;
+                const y = Math.random() * 512;
+                const width = Math.random() * 100 + 50;
+                const height = Math.random() * 100 + 50;
+                ctx.strokeRect(x, y, width, height);
+            }
+            
+            for (let i = 0; i < 100; i++) {
+                const x = Math.random() * 512;
+                const y = Math.random() * 512;
+                const radius = Math.random() * 10 + 3;
+                ctx.fillStyle = `rgba(80, 70, 60, ${Math.random() * 0.3})`;
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            for (let i = 0; i < 50; i++) {
+                const x = Math.random() * 512;
+                const y = Math.random() * 512;
+                const radius = Math.random() * 15 + 5;
+                ctx.fillStyle = `rgba(150, 90, 70, ${Math.random() * 0.2})`;
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            return new THREE.CanvasTexture(canvas);
+        }
+        
+        const shipTexture = createShipTexture();
+        
+        const hullMaterial = new THREE.MeshStandardMaterial({
+            map: shipTexture,
+            metalness: 0.7,
+            roughness: 0.4,
+            color: 0xC0C0B8
+        });
+        
+        const darkHullMaterial = new THREE.MeshStandardMaterial({
+            color: 0x505048,
+            metalness: 0.8,
+            roughness: 0.3
+        });
+        
+        const panelMaterial = new THREE.MeshStandardMaterial({
+            color: 0x707068,
+            metalness: 0.85,
+            roughness: 0.25
+        });
+        
+        // Main saucer body
+        const saucerGeom = new THREE.CylinderGeometry(6, 6, 1, 32);
+        const mainHull = new THREE.Mesh(saucerGeom, hullMaterial);
+        mainHull.rotation.x = Math.PI / 2;
+        shipGroup.add(mainHull);
+        
+        // Front mandibles (fork shape)
+        const mandibleShape = new THREE.Shape();
+        mandibleShape.moveTo(0, 0);
+        mandibleShape.lineTo(8, -1);
+        mandibleShape.lineTo(9, -2.5);
+        mandibleShape.lineTo(8, -4);
+        mandibleShape.lineTo(1, -3);
+        mandibleShape.lineTo(0, -1);
+        
+        const mandibleGeom = new THREE.ExtrudeGeometry(mandibleShape, {
+            depth: 0.6,
+            bevelEnabled: true,
+            bevelThickness: 0.1,
+            bevelSize: 0.1,
+            bevelSegments: 2
+        });
+        
+        const leftMandible = new THREE.Mesh(mandibleGeom, hullMaterial);
+        leftMandible.position.set(0, 0, -0.3);
+        leftMandible.rotation.y = Math.PI / 2;
+        leftMandible.rotation.z = Math.PI / 6;
+        shipGroup.add(leftMandible);
+        
+        const rightMandible = new THREE.Mesh(mandibleGeom, hullMaterial);
+        rightMandible.position.set(0, 0, 0.3);
+        rightMandible.rotation.y = Math.PI / 2;
+        rightMandible.rotation.z = -Math.PI / 6;
+        shipGroup.add(rightMandible);
+        
+        // Cockpit
+        const cockpitGeom = new THREE.SphereGeometry(0.8, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+        const cockpitMat = new THREE.MeshStandardMaterial({
+            color: 0x2A3F5F,
+            metalness: 0.9,
+            roughness: 0.1,
+            transparent: true,
+            opacity: 0.7
+        });
+        const cockpit = new THREE.Mesh(cockpitGeom, cockpitMat);
+        cockpit.position.set(4, 0.7, -2);
+        cockpit.rotation.x = Math.PI;
+        shipGroup.add(cockpit);
+        
+        const tubeGeom = new THREE.CylinderGeometry(0.5, 0.6, 1.2, 12);
+        const tube = new THREE.Mesh(tubeGeom, panelMaterial);
+        tube.position.set(4, 0, -2);
+        shipGroup.add(tube);
+        
+        // Sensor dishes
+        const dishGeom = new THREE.CylinderGeometry(1.2, 1.4, 0.3, 24);
+        const upperDish = new THREE.Mesh(dishGeom, panelMaterial);
+        upperDish.position.set(-1, 1, 1);
+        shipGroup.add(upperDish);
+        
+        const lowerDish = new THREE.Mesh(dishGeom, darkHullMaterial);
+        lowerDish.position.set(1, -1, -1);
+        shipGroup.add(lowerDish);
+        
+        // Radar dish
+        const radarDishGeom = new THREE.CylinderGeometry(1.5, 1.5, 0.15, 32);
+        const radarDish = new THREE.Mesh(radarDishGeom, panelMaterial);
+        radarDish.position.set(-3, 1.5, 2);
+        radarDish.rotation.x = Math.PI / 6;
+        shipGroup.add(radarDish);
+        
+        const armGeom = new THREE.CylinderGeometry(0.15, 0.15, 1.5, 8);
+        const arm = new THREE.Mesh(armGeom, darkHullMaterial);
+        arm.position.set(-3, 0.8, 2);
+        shipGroup.add(arm);
+        
+        // Engine details
+        const enginePositions = [
+            [-2, -0.3, 4.5],
+            [-1, -0.3, 5],
+            [0, -0.3, 5.2],
+            [1, -0.3, 5],
+            [2, -0.3, 4.5]
+        ];
+        
+        const engineGlows = [];
+        const engineLights = [];
+        
+        enginePositions.forEach(pos => {
+            const housingGeom = new THREE.CylinderGeometry(0.4, 0.5, 0.8, 12);
+            const housing = new THREE.Mesh(housingGeom, darkHullMaterial);
+            housing.position.set(pos[0], pos[1], pos[2]);
+            housing.rotation.x = Math.PI / 2;
+            shipGroup.add(housing);
+            
+            const glowGeom = new THREE.CircleGeometry(0.4, 16);
+            const glowMat = new THREE.MeshBasicMaterial({
+                color: 0x4DD0FF,
+                transparent: true,
+                opacity: 0.8,
+                side: THREE.DoubleSide
+            });
+            const glow = new THREE.Mesh(glowGeom, glowMat);
+            glow.position.set(pos[0], pos[1], pos[2] + 0.5);
+            glow.rotation.x = Math.PI / 2;
+            shipGroup.add(glow);
+            engineGlows.push(glow);
+            
+            const light = new THREE.PointLight(0x4DD0FF, 1.5, 30);
+            light.position.set(pos[0], pos[1], pos[2] + 1);
+            shipGroup.add(light);
+            engineLights.push(light);
+        });
+        
+        // Surface panels
+        for (let i = 0; i < 20; i++) {
+            const angle = (i / 20) * Math.PI * 2;
+            const radius = 3 + Math.random() * 2;
+            const panelGeom = new THREE.BoxGeometry(
+                Math.random() * 0.5 + 0.3,
+                0.1,
+                Math.random() * 0.5 + 0.3
+            );
+            const panel = new THREE.Mesh(panelGeom, panelMaterial);
+            panel.position.set(
+                Math.cos(angle) * radius,
+                0.6,
+                Math.sin(angle) * radius
+            );
+            panel.rotation.y = Math.random() * Math.PI;
+            shipGroup.add(panel);
+        }
+        
+        // Vents
+        for (let i = 0; i < 8; i++) {
+            const ventGeom = new THREE.BoxGeometry(0.2, 0.15, 1 + Math.random() * 0.5);
+            const vent = new THREE.Mesh(ventGeom, darkHullMaterial);
+            const angle = (i / 8) * Math.PI * 2;
+            vent.position.set(
+                Math.cos(angle) * 2,
+                0.6,
+                Math.sin(angle) * 2
+            );
+            vent.rotation.y = angle;
+            shipGroup.add(vent);
+        }
+        
+        // Landing gear indicators
+        const gearPositions = [
+            [3, -0.6, 2],
+            [-3, -0.6, -2],
+            [0, -0.6, -4]
+        ];
+        
+        gearPositions.forEach(pos => {
+            const gearGeom = new THREE.BoxGeometry(0.4, 0.3, 0.4);
+            const gear = new THREE.Mesh(gearGeom, darkHullMaterial);
+            gear.position.set(pos[0], pos[1], pos[2]);
+            shipGroup.add(gear);
+        });
+        
+        // Navigation lights
+        const navLightGeom = new THREE.SphereGeometry(0.15, 8, 8);
+        const redNavMat = new THREE.MeshBasicMaterial({ color: 0xFF3030 });
+        const greenNavMat = new THREE.MeshBasicMaterial({ color: 0x30FF30 });
+        
+        const redNav = new THREE.Mesh(navLightGeom, redNavMat);
+        redNav.position.set(-5, 0.3, -2);
+        shipGroup.add(redNav);
+        
+        const greenNav = new THREE.Mesh(navLightGeom, greenNavMat);
+        greenNav.position.set(-5, 0.3, 2);
+        shipGroup.add(greenNav);
+        
+        shipGroup.scale.set(1.2, 1.2, 1.2);
+        shipGroup.position.set(0, 20, 50);
+        shipGroup.rotation.y = -Math.PI / 2;
+        
+        scene.add(shipGroup);
+
+        // === NAVIGATION STATE ===
+        let currentPlanetIndex = 0;
+        let isTransitioning = false;
+        let transitionProgress = 0;
+        let startPosition = new THREE.Vector3();
+        let targetPosition = new THREE.Vector3();
+
+        // === UI UPDATES ===
+        function updateUI() {
+            const planet = planetsData[currentPlanetIndex];
+            document.getElementById('planetName').textContent = planet.name;
+            document.getElementById('planetType').textContent = planet.type;
+            document.getElementById('planetDesc').textContent = planet.description;
+            document.getElementById('destination').textContent = planet.name;
+            document.getElementById('distance').textContent = (planet.distance / 100).toFixed(2) + ' AU';
+            
+            const techStack = document.getElementById('techStack');
+            techStack.innerHTML = '';
+            planet.tech.forEach(tech => {
+                const tag = document.createElement('div');
+                tag.className = 'tech-tag';
+                tag.textContent = tech;
+                techStack.appendChild(tag);
+            });
+            
+            const progressDots = document.querySelectorAll('.progress-dot');
+            progressDots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentPlanetIndex);
+            });
+            
+            document.getElementById('prevBtn').disabled = currentPlanetIndex === 0;
+            document.getElementById('nextBtn').disabled = currentPlanetIndex === planetsData.length - 1;
+            
+            setTimeout(() => {
+                document.getElementById('planetInfo').classList.add('visible');
+            }, 500);
+        }
+
+        // === NAVIGATION ===
+        function navigateToPlanet(index) {
+            if (isTransitioning || index < 0 || index >= planetsData.length) return;
+            
+            isTransitioning = true;
+            transitionProgress = 0;
+            document.getElementById('status').textContent = 'TRAVELING';
+            document.getElementById('planetInfo').classList.remove('visible');
+            
+            startPosition.copy(shipGroup.position);
+            const targetPlanet = planetMeshes[index];
+            targetPosition.copy(targetPlanet.position);
+            targetPosition.y += 30;
+            
+            currentPlanetIndex = index;
+        }
+
+        // === CONTROLS ===
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            navigateToPlanet(currentPlanetIndex - 1);
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            navigateToPlanet(currentPlanetIndex + 1);
+        });
+
+        const progressContainer = document.getElementById('progress');
+        planetsData.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.className = 'progress-dot';
+            dot.addEventListener('click', () => navigateToPlanet(i));
+            progressContainer.appendChild(dot);
+        });
+
+        // === MOUSE INTERACTION ===
+        let mouseX = 0;
+        let mouseY = 0;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        // === RESIZE ===
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // === ANIMATION ===
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const delta = clock.getDelta();
+            const time = clock.getElapsedTime();
+            
+            planets.forEach(planet => {
+                planet.mesh.rotation.y += planet.rotationSpeed;
+            });
+            
+            stars.rotation.y += 0.00005;
+            
+            if (isTransitioning) {
+                transitionProgress += delta * 0.3;
+                
+                if (transitionProgress >= 1) {
+                    transitionProgress = 1;
+                    isTransitioning = false;
+                    document.getElementById('status').textContent = 'IN ORBIT';
+                    updateUI();
+                }
+                
+                const eased = transitionProgress < 0.5
+                    ? 2 * transitionProgress * transitionProgress
+                    : 1 - Math.pow(-2 * transitionProgress + 2, 2) / 2;
+                
+                shipGroup.position.lerpVectors(startPosition, targetPosition, eased);
+                
+                const direction = new THREE.Vector3()
+                    .subVectors(targetPosition, shipGroup.position)
+                    .normalize();
+                shipGroup.lookAt(shipGroup.position.clone().add(direction));
+                
+                const pulse = 1 + Math.sin(time * 15) * 0.4;
+                engineGlows.forEach(glow => {
+                    glow.scale.set(pulse, pulse, pulse);
+                });
+                engineLights.forEach(light => {
+                    light.intensity = 1.5 + pulse;
+                });
+            } else {
+                const idlePulse = 1 + Math.sin(time * 2) * 0.1;
+                engineGlows.forEach(glow => {
+                    glow.scale.set(idlePulse, idlePulse, idlePulse);
+                });
+            }
+            
+            const shipPos = shipGroup.position;
+            const cameraOffset = new THREE.Vector3(
+                mouseX * 40,
+                30 + mouseY * 25,
+                90
+            );
+            camera.position.lerp(
+                new THREE.Vector3(
+                    shipPos.x + cameraOffset.x,
+                    shipPos.y + cameraOffset.y,
+                    shipPos.z + cameraOffset.z
+                ),
+                0.05
+            );
+            camera.lookAt(shipPos);
+            
+            renderer.render(scene, camera);
+        }
+
+        // === INIT ===
+        setTimeout(() => {
+            document.getElementById('loading').style.display = 'none';
+            updateUI();
+        }, 1000);
+
+        animate();
+    </script>
+</body>
+</html>

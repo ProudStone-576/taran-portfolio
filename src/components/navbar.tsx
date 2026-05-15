@@ -1,154 +1,150 @@
 import { useEffect, useState } from 'react';
-import { Atom } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Magnetic from './Magnetic';
 
-const domains = [
-  'Data Science & Analytics',
-  'AI / Machine Learning',
-  'Data Engineering & Pipelines',
-  'Backend & API Systems',
-  'Financial & Time-Series Modeling',
-  'Synthetic Data & Privacy Engineering',
+const links = [
+  { href: '#about', label: 'About' },
+  { href: '#skills', label: 'Skills' },
+  { href: '#process', label: 'Process' },
+  { href: '#projects', label: 'Work' },
+  { href: '#contact', label: 'Contact' },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 16);
+    const onScroll = () => setScrolled(window.scrollY > 24);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 h-16 md:h-20
-        transition-colors duration-300
-        ${scrolled ? 'bg-black/90 border-b border-white/10' : 'bg-transparent'}
-      `}
-      style={{ backdropFilter: scrolled ? 'blur(10px)' : 'none' }}
-    >
-      <div className="max-w-7xl mx-auto h-full px-4 md:px-6 flex items-center justify-between">
+    <>
+      <motion.nav
+        initial={{ y: -40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 1.2, duration: 0.8, ease: [0.2, 0.8, 0.2, 1] }}
+        className="fixed top-0 left-0 right-0 z-50"
+      >
+        <div
+          className={`mx-auto max-w-[1500px] px-5 md:px-10 pt-5 md:pt-6 transition-all duration-500 ${
+            scrolled ? 'pt-3 md:pt-3' : ''
+          }`}
+        >
+          <div
+            className={`flex items-center justify-between rounded-full px-5 md:px-6 py-3 transition-all duration-500 ${
+              scrolled
+                ? 'bg-ink/70 backdrop-blur-xl border border-bone/10'
+                : 'bg-transparent border border-transparent'
+            }`}
+          >
+            <a href="#home" data-cursor="Top" className="flex items-center gap-3 group">
+              <span className="relative w-7 h-7 rounded-full bg-acid flex items-center justify-center">
+                <span className="absolute inset-0 rounded-full bg-acid animate-ping opacity-50" />
+                <span className="relative w-2 h-2 rounded-full bg-ink" />
+              </span>
+              <span className="mono text-xs uppercase tracking-[0.25em] text-bone group-hover:text-acid transition-colors">
+                Taran<span className="text-bone/40">.M</span>
+              </span>
+            </a>
 
-        {/* Logo */}
-        <a href="#top" className="flex items-center gap-2 text-white font-semibold text-lg">
-          <Atom className="w-5 h-5" />
-          TARAN
-        </a>
-
-        {/* Desktop Nav */}
-        <ul className="hidden md:flex items-center gap-8 text-sm text-gray-300">
-          <li className="relative group cursor-default">
-            <span className="hover:text-white transition-colors">Domains</span>
-            <ul className="
-              absolute left-1/2 -translate-x-1/2 mt-3
-              hidden group-hover:block
-              bg-black border border-white/10 rounded-md p-4
-              space-y-2 min-w-[260px]
-            ">
-              {domains.map(d => (
-                <li key={d} className="text-gray-400 text-sm">{d}</li>
+            <ul className="hidden md:flex items-center gap-1">
+              {links.map((l) => (
+                <li key={l.href}>
+                  <a
+                    href={l.href}
+                    data-cursor="Go"
+                    className="relative px-4 py-2 mono text-xs uppercase tracking-widest text-bone/70 hover:text-bone transition-colors group"
+                  >
+                    <span>{l.label}</span>
+                    <span className="absolute left-4 right-4 -bottom-0.5 h-px bg-acid scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500" />
+                  </a>
+                </li>
               ))}
             </ul>
-          </li>
 
-          <li><a href="#about" className="hover:text-white">About</a></li>
-          <li><a href="#projects" className="hover:text-white">Projects</a></li>
-          <li><a href="#process" className="hover:text-white">Process</a></li>
-          <li><a href="#contact" className="hover:text-white">Contact</a></li>
-        </ul>
+            <div className="hidden md:block">
+              <Magnetic>
+                <a
+                  href="/Taran_Matharu_resume.pdf"
+                  target="_blank"
+                  data-cursor="PDF"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-bone text-ink mono text-xs uppercase tracking-widest font-bold rounded-full hover:bg-acid transition-colors"
+                >
+                  Resume
+                  <span className="block w-1.5 h-1.5 rounded-full bg-ink" />
+                </a>
+              </Magnetic>
+            </div>
 
-        {/* Desktop Actions */}
-        <div className="hidden md:flex items-center gap-3 text-sm">
-          <a
-            href="src/assets/Taran_Matharu_resume.pdf"
-            className="px-3 py-1.5 border border-white/30 rounded text-white"
-          >
-            Resume
-          </a>
-          <a
-            href="https://github.com/ProudStone-576"
-            target="_blank"
-            className="px-3 py-1.5 bg-white text-black rounded"
-          >
-            GitHub
-          </a>
-          <a
-            href="https://www.linkedin.com/in/taran-matharu-/"
-            target="_blank"
-            className="px-3 py-1.5 bg-white text-black rounded"
-          >
-            LinkedIn
-          </a>
-        </div>
-
-        {/* Mobile Toggle */}
-        <button
-          onClick={() => setMobileOpen(v => !v)}
-          className="md:hidden w-8 h-8 flex flex-col justify-center gap-1"
-          aria-label="Menu"
-        >
-          <span className="h-0.5 bg-white w-full" />
-          <span className="h-0.5 bg-white w-4/5 ml-auto" />
-          <span className="h-0.5 bg-white w-3/5 ml-auto" />
-        </button>
-      </div>
-
-      {/* Mobile Menu Overlay + Panel */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              className="fixed inset-0 bg-black/60 md:hidden"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setMobileOpen(false)}
-            />
-
-            {/* Menu */}
-            <motion.div
-              className="md:hidden bg-black border-t border-white/10 px-6 py-8"
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -20, opacity: 0 }}
-              transition={{ duration: 0.25, ease: 'easeOut' }}
+            <button
+              onClick={() => setOpen((v) => !v)}
+              aria-label="Menu"
+              className="md:hidden flex flex-col gap-1.5 w-8 h-8 items-center justify-center"
             >
-              <ul className="flex flex-col gap-6 text-lg text-gray-300">
+              <span className={`h-px w-6 bg-bone transition-transform ${open ? 'translate-y-[3px] rotate-45' : ''}`} />
+              <span className={`h-px w-6 bg-bone transition-transform ${open ? '-translate-y-[3px] -rotate-45' : ''}`} />
+            </button>
+          </div>
+        </div>
+      </motion.nav>
 
-                <li className="text-white font-medium">Domains</li>
-                <ul className="pl-4 space-y-2 text-sm text-gray-400">
-                  {domains.map(d => (
-                    <li key={d}>{d}</li>
-                  ))}
-                </ul>
-
-                <li><a href="#about" onClick={() => setMobileOpen(false)}>About</a></li>
-                <li><a href="#projects" onClick={() => setMobileOpen(false)}>Projects</a></li>
-                <li><a href="#process" onClick={() => setMobileOpen(false)}>Process</a></li>
-                <li><a href="#contact" onClick={() => setMobileOpen(false)}>Contact</a></li>
-
-                <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 md:hidden bg-ink"
+          >
+            <motion.ul
+              initial="hidden"
+              animate="show"
+              exit="hidden"
+              variants={{
+                show: { transition: { staggerChildren: 0.08, delayChildren: 0.15 } },
+                hidden: {},
+              }}
+              className="h-full flex flex-col items-start justify-center px-8 gap-4"
+            >
+              {links.map((l) => (
+                <motion.li
+                  key={l.href}
+                  variants={{
+                    hidden: { y: 50, opacity: 0 },
+                    show: { y: 0, opacity: 1, transition: { duration: 0.6, ease: [0.2, 0.8, 0.2, 1] } },
+                  }}
+                >
                   <a
-                    href="/resume.pdf"
-                    className="border border-white/30 rounded px-4 py-2 text-center"
+                    href={l.href}
+                    onClick={() => setOpen(false)}
+                    className="display text-6xl text-bone hover:text-acid transition-colors"
                   >
-                    Resume
+                    {l.label}
                   </a>
-                  <a
-                    href="https://github.com/ProudStone-576"
-                    className="bg-white text-black rounded px-4 py-2 text-center"
-                  >
-                    GitHub
-                  </a>
-                </div>
-              </ul>
-            </motion.div>
-          </>
+                </motion.li>
+              ))}
+              <motion.li
+                variants={{
+                  hidden: { y: 50, opacity: 0 },
+                  show: { y: 0, opacity: 1, transition: { duration: 0.6 } },
+                }}
+                className="mt-8"
+              >
+                <a
+                  href="/Taran_Matharu_resume.pdf"
+                  target="_blank"
+                  className="mono text-xs uppercase tracking-widest border border-bone/30 px-5 py-3 rounded-full"
+                >
+                  Resume ↗
+                </a>
+              </motion.li>
+            </motion.ul>
+          </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </>
   );
 }

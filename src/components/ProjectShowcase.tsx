@@ -1,128 +1,178 @@
-import { motion } from "framer-motion";
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
+
+const projects = [
+  {
+    n: '01',
+    title: 'Motor Unit Degeneration Simulator',
+    tag: 'Research · Neural ODE',
+    description:
+      'Hybrid mechanistic + Neural ODE simulator for studying motor unit degeneration, intervention timing, and non-identifiability under explicit assumptions.',
+    tech: ['Neural ODE', 'Python', 'Scientific ML'],
+    link: 'https://github.com/ProudStone-576/motor-unit-degeneration-simulator',
+    accent: 'acid',
+    size: 'lg',
+  },
+  {
+    n: '02',
+    title: 'Volatility Regime Engine',
+    tag: 'Finance · Time-Series',
+    description:
+      'ML pipeline detecting volatility regimes via rolling statistics and market state transitions for risk analysis.',
+    tech: ['Time Series', 'ML', 'Finance'],
+    link: 'https://github.com/ProudStone-576/volatility-regime-engine',
+    accent: 'plasma',
+    size: 'md',
+  },
+  {
+    n: '03',
+    title: 'Real-time Sudoku Vision Solver',
+    tag: 'Computer Vision',
+    description: 'Detects Sudoku grids in real-time and solves via backtracking under live video constraints.',
+    tech: ['OpenCV', 'Python', 'Algorithms'],
+    link: 'https://github.com/ProudStone-576/realtime-sudoku-vision-solver',
+    accent: 'bone',
+    size: 'sm',
+  },
+  {
+    n: '04',
+    title: 'AI Solution Evaluation System',
+    tag: 'Systems',
+    description: 'MySQL-based platform managing AI tasks, solutions, feedback, ratings, automated evaluations.',
+    tech: ['MySQL', 'System Design', 'AI Eval'],
+    link: 'https://github.com/ProudStone-576/ai-solution-evaluation-system',
+    accent: 'cobalt',
+    size: 'md',
+  },
+  {
+    n: '05',
+    title: 'Bulldozer Price Prediction',
+    tag: 'Deep Learning · Tabular',
+    description: 'TensorFlow neural network predicting bulldozer auction prices on structured tabular data.',
+    tech: ['TensorFlow', 'Neural Net', 'Regression'],
+    link: 'https://github.com/ProudStone-576/Bulldozer-price-prediction-model',
+    accent: 'bone',
+    size: 'sm',
+  },
+  {
+    n: '06',
+    title: 'Heart Disease Prediction',
+    tag: 'Healthcare ML',
+    description: 'Supervised learning for heart disease risk on clinical data with validated metrics.',
+    tech: ['Classification', 'Healthcare', 'Python'],
+    link: 'https://github.com/ProudStone-576/Heart-Disease-Model',
+    accent: 'acid',
+    size: 'md',
+  },
+];
+
+const accentMap: Record<string, string> = {
+  acid: 'group-hover:bg-acid group-hover:text-ink',
+  plasma: 'group-hover:bg-plasma group-hover:text-ink',
+  cobalt: 'group-hover:bg-cobalt group-hover:text-bone',
+  bone: 'group-hover:bg-bone group-hover:text-ink',
+};
+
+const sizeMap: Record<string, string> = {
+  lg: 'md:col-span-8 md:row-span-2 md:min-h-[640px]',
+  md: 'md:col-span-4 md:min-h-[310px]',
+  sm: 'md:col-span-4 md:min-h-[310px]',
+};
 
 export default function ProjectsSection() {
-  const projects = [
-    {
-      title: "Motor Unit Degeneration Simulator",
-      description:
-        "Hybrid mechanistic + Neural ODE simulator for studying motor unit degeneration, intervention timing, and non-identifiability under explicit assumptions.",
-      meaning: "Represents research-grade modeling and scientific rigor.",
-      tech: ["Neural ODE", "Python", "Scientific ML"],
-      link: "https://github.com/ProudStone-576/motor-unit-degeneration-simulator",
-    },
-    {
-      title: "Volatility Regime Engine",
-      description:
-        "Machine learning pipeline to detect volatility regimes using rolling statistics and market state transitions for financial risk analysis.",
-      meaning: "Represents time-series reasoning and risk-aware ML.",
-      tech: ["Time Series", "ML", "Finance"],
-      link: "https://github.com/ProudStone-576/volatility-regime-engine",
-    },
-    {
-      title: "Real-time Sudoku Vision Solver",
-      description:
-        "Computer vision system that detects Sudoku grids in real time and solves them using backtracking algorithms.",
-      meaning: "Represents algorithmic thinking under real-time constraints.",
-      tech: ["OpenCV", "Python", "Algorithms"],
-      link: "https://github.com/ProudStone-576/realtime-sudoku-vision-solver",
-    },
-    {
-      title: "AI Solution Evaluation System",
-      description:
-        "MySQL-based system for managing AI tasks, solutions, user feedback, ratings, and automated evaluations at scale.",
-      meaning: "Represents system design and scalable evaluation logic.",
-      tech: ["MySQL", "System Design", "AI Evaluation"],
-      link: "https://github.com/ProudStone-576/ai-solution-evaluation-system",
-    },
-    {
-      title: "Bulldozer Price Prediction Model",
-      description:
-        "TensorFlow-based neural network for predicting bulldozer auction prices using structured tabular data.",
-      meaning: "Represents applied deep learning beyond toy datasets.",
-      tech: ["TensorFlow", "Neural Network", "Regression"],
-      link: "https://github.com/ProudStone-576/Bulldozer-price-prediction-model",
-    },
-    {
-      title: "Heart Disease Prediction Model",
-      description:
-        "Supervised learning model to predict heart disease risk using clinical data and validated metrics.",
-      meaning: "Represents responsible ML applied to healthcare data.",
-      tech: ["Classification", "Healthcare ML", "Python"],
-      link: "https://github.com/ProudStone-576/Heart-Disease-Model",
-    },
-  ];
+  const root = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.utils.toArray<HTMLElement>('[data-card]').forEach((el, i) => {
+        gsap.from(el, {
+          y: 80,
+          opacity: 0,
+          duration: 1,
+          ease: 'expo.out',
+          delay: (i % 3) * 0.08,
+          scrollTrigger: { trigger: el, start: 'top 90%' },
+        });
+      });
+    }, root);
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section
+      ref={root}
       id="projects"
-      className="relative w-full bg-black text-white px-6 md:px-12 py-28 overflow-hidden"
+      className="relative py-32 md:py-44 px-5 md:px-10 bg-ink overflow-hidden border-t border-bone/5"
     >
-      {/* Ambient background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-white/5 blur-[120px]" />
-      </div>
-
-      <div className="relative max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-20 max-w-2xl">
-          <div className="w-14 h-[2px] bg-gradient-to-r from-white to-white/20 mb-6" />
-          <h2 className="text-3xl md:text-4xl font-bold mb-5 tracking-tight">
-            Selected Projects
-          </h2>
-          <p className="text-gray-400 leading-relaxed">
-            Each project is chosen not for quantity, but for what it proves
-            about how I think and build systems.
-          </p>
+      <div className="max-w-[1500px] mx-auto scroll-skew">
+        <div className="grid grid-cols-12 gap-y-12 md:gap-x-10 mb-16 md:mb-24">
+          <div className="col-span-12 md:col-span-7">
+            <div className="mono text-[10px] uppercase tracking-[0.4em] text-acid mb-4">
+              ◉ 05 — Selected Work
+            </div>
+            <h2 className="display text-6xl md:text-[8vw] text-bone leading-[0.9]">
+              Things I've <span className="italic text-acid">shipped.</span>
+            </h2>
+          </div>
+          <div className="col-span-12 md:col-span-4 md:col-start-9 self-end">
+            <p className="text-bone/70 leading-relaxed">
+              Each project is selected not for quantity, but for what it proves about how I think and build.
+            </p>
+            <a
+              href="https://github.com/ProudStone-576"
+              target="_blank"
+              data-cursor="GitHub"
+              className="mt-6 inline-flex items-center gap-2 mono text-xs uppercase tracking-widest text-bone hover:text-acid transition-colors"
+            >
+              All repos <span>↗</span>
+            </a>
+          </div>
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {projects.map((project, i) => (
-            <motion.div
-              key={project.title}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1, duration: 0.7, ease: "easeOut" }}
-              viewport={{ once: true }}
-              className="group relative rounded-2xl border border-white/10 bg-black/60 backdrop-blur-sm p-7 transition-all duration-300 hover:border-white/30 hover:-translate-y-2"
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-5 auto-rows-fr">
+          {projects.map((p, idx) => (
+            <a
+              key={p.n}
+              href={p.link}
+              target="_blank"
+              data-card
+              data-parallax-vel
+              data-cursor="Open"
+              style={{ ['--vel-mul' as never]: ((idx % 3) - 1) * 1.4 + 0.4 }}
+              className={`relative group bg-bone/[0.02] border border-bone/10 rounded-3xl overflow-hidden p-7 md:p-9 flex flex-col justify-between transition-colors duration-500 ${sizeMap[p.size]} ${accentMap[p.accent]}`}
             >
-              {/* Hover meaning overlay */}
-              <div className="absolute inset-0 rounded-2xl bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center px-6 text-center pointer-events-none">
-                <p className="text-sm text-gray-200 leading-relaxed">
-                  {project.meaning}
-                </p>
+              <div className="flex items-center justify-between">
+                <span className="mono text-[10px] uppercase tracking-[0.3em] text-bone/40 group-hover:text-current transition-colors">
+                  {p.n} · {p.tag}
+                </span>
+                <span className="text-2xl text-bone/30 group-hover:text-current group-hover:rotate-45 transition-all duration-500">
+                  ↗
+                </span>
               </div>
 
-              {/* Content */}
-              <div className="relative z-10 group-hover:opacity-20 transition-opacity duration-300">
-                <h3 className="text-xl font-semibold mb-3 tracking-tight">
-                  {project.title}
+              <div>
+                <h3 className={`display ${p.size === 'lg' ? 'text-4xl md:text-6xl' : 'text-2xl md:text-3xl'} mb-4 leading-tight`}>
+                  {p.title}
                 </h3>
-
-                <p className="text-gray-400 text-sm leading-relaxed mb-5">
-                  {project.description}
+                <p className={`text-sm md:text-base text-bone/65 group-hover:text-current/80 leading-relaxed ${p.size === 'lg' ? 'max-w-md' : 'max-w-sm'}`}>
+                  {p.description}
                 </p>
 
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {project.tech.map((t) => (
+                <div className="mt-6 flex flex-wrap gap-2">
+                  {p.tech.map((t) => (
                     <span
                       key={t}
-                      className="text-xs px-3 py-1 rounded-full border border-white/20 text-gray-300 bg-white/5"
+                      className="mono text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-full border border-bone/15 text-bone/60 group-hover:border-current/30 group-hover:text-current transition-colors"
                     >
                       {t}
                     </span>
                   ))}
                 </div>
-
-                <a
-                  href={project.link}
-                  target="_blank"
-                  className="inline-flex items-center text-sm font-medium text-white"
-                >
-                  View on GitHub →
-                </a>
               </div>
-            </motion.div>
+            </a>
           ))}
         </div>
       </div>

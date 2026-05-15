@@ -1,216 +1,125 @@
-import { useRef } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Magnetic from './Magnetic';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Contact() {
-  const ref = useRef<HTMLElement | null>(null);
+  const root = useRef<HTMLElement>(null);
 
-  // scroll progress for this section: 0 = not visible, 1 = fully passed
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'end start'], // map when section enters/exits viewport
-  });
-
-  // smooth transforms driven by scroll progress
-  const rawYBlob1 = useTransform(scrollYProgress, [0, 1], [60, -40]);
-  const rawYBlob2 = useTransform(scrollYProgress, [0, 1], [-40, 40]);
-  const rawHeaderY = useTransform(scrollYProgress, [0, 0.2, 0.45], [40, 10, 0]);
-  const rawHeaderOpacity = useTransform(scrollYProgress, [0, 0.15, 0.35], [0, 0.7, 1]);
-  const rawCardsY = useTransform(scrollYProgress, [0, 0.25, 0.5], [30, 8, 0]);
-  const rawFormY = useTransform(scrollYProgress, [0, 0.3, 0.6], [40, 8, 0]);
-  const rawFormOpacity = useTransform(scrollYProgress, [0, 0.35, 0.6], [0, 0.6, 1]);
-
-  // apply spring for organic movement
-  const blob1Y = useSpring(rawYBlob1, { stiffness: 120, damping: 20 });
-  const blob2Y = useSpring(rawYBlob2, { stiffness: 120, damping: 20 });
-  const headerY = useSpring(rawHeaderY, { stiffness: 140, damping: 30 });
-  const headerOpacity = useSpring(rawHeaderOpacity, { stiffness: 140, damping: 30 });
-  const cardsY = useSpring(rawCardsY, { stiffness: 140, damping: 30 });
-  const formY = useSpring(rawFormY, { stiffness: 140, damping: 30 });
-  const formOpacity = useSpring(rawFormOpacity, { stiffness: 140, damping: 30 });
-
-
-  const variants = {
-    active: {
-      backgroundColor: "#f00"
-    },
-    inactive: {
-      backgroundColor: "#fff",
-      transition: { duration: 2 }
-    }
-  };
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const lines = gsap.utils.toArray<HTMLElement>('[data-contact-line] > span > span');
+      gsap.set(lines, { yPercent: 110 });
+      ScrollTrigger.create({
+        trigger: '[data-contact-line]',
+        start: 'top 80%',
+        onEnter: () => gsap.to(lines, { yPercent: 0, duration: 1.2, ease: 'expo.out', stagger: 0.08 }),
+      });
+    }, root);
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section
-      ref={ref}
+      ref={root}
       id="contact"
-      className="bg-black text-white py-20 px-4 sm:px-6 md:px-12 relative overflow-hidden"
-      aria-label="Contact"
+      className="relative py-32 md:py-44 px-5 md:px-10 bg-ink overflow-hidden border-t border-bone/5"
     >
-      {/* Grid Background */}
-      <div
-        className="absolute inset-0 opacity-5 pointer-events-none"
-        style={{
-          backgroundImage: `linear-gradient(to right, #fff 1px, transparent 1px),
-                           linear-gradient(to bottom, #fff 1px, transparent 1px)`,
-          backgroundSize: '40px 40px',
-        }}
-      />
-
-      {/* Parallax blobs */}
-      <motion.div
-        style={{ y: blob1Y }}
-        className="absolute top-1/2 left-1/2 w-72 h-72 bg-white/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none"
-        aria-hidden="true"
-      />
-      <motion.div
-        style={{ y: blob2Y }}
-        className="absolute top-14 right-6 w-40 h-40 bg-white/6 rounded-full blur-2xl z-0 pointer-events-none"
-        aria-hidden="true"
-      />
-
-      {/* Header (parallax + fade in) */}
-      <motion.div
-        className="max-w-4xl mx-auto text-center mb-14 relative z-10"
-        style={{ y: headerY, opacity: headerOpacity }}
-      >
-        <div className="w-16 h-0.5 bg-white mx-auto mb-6" />
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold uppercase tracking-widest">
-          Contact
-        </h2>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          // subtle micro interaction on hover
-          whileHover={{ scale: 1.01 }}
-          className="text-gray-400 mt-4 max-w-xl mx-auto"
-        >
-          Technical collaboration, research discussions, or system-level work.
-        </motion.p>
-      </motion.div>
-
-      {/* Contact Info - cards reveal with stagger */}
-      <motion.div
-        className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 text-center text-gray-400 mb-12 relative z-10"
-        style={{ y: cardsY }}
-      >
-        {[
-          {
-            title: 'Email',
-            content: (
-              <a
-                href="mailto:taranjeetsinghmatharu15@gmail.com"
-                className="text-white hover:underline"
-              >
-                taranmatharu@gmail.com
-              </a>
-            ),
-          },
-          {
-            title: 'Phone',
-            content: (
-              <a href="tel:+12366328270" className="text-white hover:underline">
-                +1 (236) 632-8270
-              </a>
-            ),
-          },
-          {
-            title: 'Location',
-            content: <p>Abbotsford, BC, Canada</p>,
-          },
-        ].map(({ title, content }, i) => (
-          <motion.div
-            key={title}
-            className="bg-white/5 backdrop-blur-md p-6 rounded-xl border border-white/10"
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.4 }}
-            custom={i}
-            aria-hidden={false}
-          >
-            <h3 className="text-white font-semibold text-lg mb-2">{title}</h3>
-            {content}
-          </motion.div>
-        ))}
-      </motion.div>
-
-      {/* Form - slide up into view, smooth */}
-      <motion.form
-        initial={{ opacity: 0, y: 36 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.2, 0.9, 0.25, 1] }}
-        viewport={{ once: true, amount: 0.35 }}
-        action="https://formsubmit.co/taranjeetsinghmatharu15@gmail.com"
-        method="POST"
-        className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10"
-        style={{ y: formY, opacity: formOpacity }}
-      >
-        <input type="hidden" name="_next" value="https://taranmatharu.com/thank-you" />
-        <input type="text" name="_honey" className="hidden" autoComplete="off" />
-
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          required
-          className="bg-white/10 text-white placeholder-gray-400 px-6 py-4 rounded-lg outline-none focus:ring-2 focus:ring-white/30"
-          aria-label="Your name"
-        />
-
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          required
-          className="bg-white/10 text-white placeholder-gray-400 px-6 py-4 rounded-lg outline-none focus:ring-2 focus:ring-white/30"
-          aria-label="Your email"
-        />
-
-        <textarea
-          name="message"
-          placeholder="Describe the problem, idea, or system."
-          rows={5}
-          required
-          className="bg-white/10 text-white placeholder-gray-400 px-6 py-4 rounded-lg outline-none focus:ring-2 focus:ring-white/30 md:col-span-2"
-          aria-label="Message"
-        />
-
-        <div className="md:col-span-2 flex justify-center">
-          <motion.button
-            type="submit"
-            className="bg-white text-black px-10 py-4 rounded-lg font-semibold"
-            variants={variants}
-            whileHover="active"
-            whileTap={{ scale: 0.98 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-            aria-label="Send inquiry"
-          >
-            Send Inquiry
-          </motion.button>
+      <div className="max-w-[1500px] mx-auto scroll-skew">
+        <div className="grid grid-cols-12 mb-16 md:mb-24 gap-y-8">
+          <div className="col-span-12 md:col-span-4">
+            <div className="mono text-[10px] uppercase tracking-[0.4em] text-acid mb-4">
+              ◉ 07 — Contact
+            </div>
+            <p className="text-bone/70 max-w-xs leading-relaxed">
+              Technical collaboration, research conversations, or system-level work. The inbox is open.
+            </p>
+          </div>
+          <div className="col-span-12 md:col-span-8">
+            <h2
+              data-contact-line
+              className="display text-[14vw] md:text-[10vw] leading-[0.9] text-bone"
+            >
+              <span className="block overflow-hidden"><span className="block">Let's build</span></span>
+              <span className="block overflow-hidden"><span className="block italic text-acid">something</span></span>
+              <span className="block overflow-hidden"><span className="block">that thinks.</span></span>
+            </h2>
+          </div>
         </div>
-      </motion.form>
 
-      {/* Ambient glows */}
-      <motion.div
-        style={{ y: blob2Y }}
-        className="absolute top-1/4 -right-36 w-64 h-64 rounded-full bg-white/5 blur-3xl pointer-events-none"
-        aria-hidden="true"
-      />
-      <motion.div
-        style={{ y: blob1Y }}
-        className="absolute bottom-1/3 -left-36 w-72 h-72 rounded-full bg-white/5 blur-3xl pointer-events-none"
-        aria-hidden="true"
-      />
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-px bg-bone/10 border border-bone/10 rounded-3xl overflow-hidden mb-12">
+          {[
+            { l: 'Email', v: 'taranjeetsinghmatharu15@gmail.com', href: 'mailto:taranjeetsinghmatharu15@gmail.com' },
+            { l: 'Phone', v: '+1 (236) 632-8270', href: 'tel:+12366328270' },
+            { l: 'Location', v: 'Abbotsford, BC · Canada' },
+          ].map((c) => (
+            <div key={c.l} className="md:col-span-4 bg-ink p-8 md:p-10 group hover:bg-acid/5 transition-colors">
+              <div className="mono text-[10px] uppercase tracking-[0.3em] text-bone/40 mb-3">
+                {c.l}
+              </div>
+              {c.href ? (
+                <a
+                  href={c.href}
+                  data-cursor="Copy"
+                  className="display text-2xl md:text-3xl text-bone group-hover:text-acid transition-colors break-all"
+                >
+                  {c.v}
+                </a>
+              ) : (
+                <div className="display text-2xl md:text-3xl text-bone">{c.v}</div>
+              )}
+            </div>
+          ))}
+        </div>
 
-      <style>{`
-        /* subtle focus for keyboard users */
-        :focus { outline: none; }
-        form :focus { box-shadow: 0 0 0 4px rgba(255,255,255,0.04); border-radius: 8px; }
+        <form
+          action="https://formsubmit.co/taranjeetsinghmatharu15@gmail.com"
+          method="POST"
+          className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5"
+        >
+          <input type="text" name="_honey" className="hidden" autoComplete="off" />
+          <input type="hidden" name="_subject" value="New inquiry from portfolio" />
+          <input type="hidden" name="_template" value="table" />
 
-        /* small performance-friendly reduction for mobile */
-        @media (prefers-reduced-motion: reduce) {
-          * { animation: none !important; transition: none !important; }
-        }
-      `}</style>
+          <input
+            name="name"
+            placeholder="Your name"
+            required
+            data-cursor="Type"
+            className="bg-bone/[0.03] border border-bone/15 text-bone placeholder-bone/30 px-6 py-5 rounded-2xl focus:outline-none focus:border-acid transition-colors mono text-sm"
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            required
+            data-cursor="Type"
+            className="bg-bone/[0.03] border border-bone/15 text-bone placeholder-bone/30 px-6 py-5 rounded-2xl focus:outline-none focus:border-acid transition-colors mono text-sm"
+          />
+          <textarea
+            name="message"
+            rows={6}
+            placeholder="Describe the problem, idea, or system."
+            required
+            data-cursor="Type"
+            className="md:col-span-2 bg-bone/[0.03] border border-bone/15 text-bone placeholder-bone/30 px-6 py-5 rounded-2xl focus:outline-none focus:border-acid transition-colors mono text-sm resize-none"
+          />
+          <div className="md:col-span-2 flex justify-end">
+            <Magnetic strength={0.25}>
+              <button
+                type="submit"
+                data-cursor="Send"
+                className="group inline-flex items-center gap-4 px-8 py-5 bg-acid text-ink mono text-xs uppercase tracking-widest font-bold rounded-full hover:gap-6 transition-all"
+              >
+                Send inquiry
+                <span className="w-2 h-2 rounded-full bg-ink group-hover:scale-150 transition-transform" />
+              </button>
+            </Magnetic>
+          </div>
+        </form>
+      </div>
     </section>
   );
 }
