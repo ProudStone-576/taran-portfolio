@@ -7,7 +7,9 @@ import Hero from './components/Hero';
 import MarqueeStrip from './components/MarqueeStrip';
 import About from './components/About';
 import Skills from './components/Skills';
+import HomeLab from './components/HomeLab';
 import Process from './components/Process';
+import Experience from './components/Experience';
 import CodePanel from './components/panelSection';
 import ProjectsSection from './components/ProjectShowcase';
 import Contact from './components/contact';
@@ -27,20 +29,22 @@ function App() {
         <Hero />
         <MarqueeStrip />
         <About />
+        <Skills />
 
         <Interlude
-          chapter="03"
-          title="Method."
-          subtitle="Most analysis predicts outcomes. I isolate mechanisms — separate triggers from amplifiers, construct causal graphs, test counterfactual scenarios."
+          chapter="04"
+          title="Lab."
+          subtitle="A real Windows-Server domain on real hardware. Active Directory, VLANs, firewall, tickets, monitoring — running as you read this."
         />
 
-        <Skills />
+        <HomeLab />
         <Process />
+        <Experience />
 
         <Interlude
-          chapter="05"
+          chapter="07"
           title="Proof."
-          subtitle="Six selected projects. Each chosen for what it proves about how I think — not for quantity."
+          subtitle="Scripts, GPOs, runbooks, dashboards. Built to keep users productive — not to win a hackathon."
           invert
         />
 

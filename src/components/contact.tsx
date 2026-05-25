@@ -25,38 +25,45 @@ export default function Contact() {
     <section
       ref={root}
       id="contact"
-      className="relative py-32 md:py-44 px-5 md:px-10 bg-ink overflow-hidden border-t border-bone/5"
+      className="relative py-32 md:py-44 px-5 md:px-10 bg-ink overflow-hidden border-t border-acid/15"
     >
       <div className="max-w-[1500px] mx-auto scroll-skew">
         <div className="grid grid-cols-12 mb-16 md:mb-24 gap-y-8">
           <div className="col-span-12 md:col-span-4">
-            <div className="mono text-[10px] uppercase tracking-[0.4em] text-acid mb-4">
-              ◉ 07 — Contact
+            <div className="mono text-[10px] uppercase tracking-[0.4em] text-acid mb-4 flex items-center gap-3">
+              <span className="led led-green animate-led-blink" />
+              ◉ 09 — open.channel
             </div>
             <p className="text-bone/70 max-w-xs leading-relaxed">
-              Technical collaboration, research conversations, or system-level work. The inbox is open.
+              IT support roles, help-desk shifts, junior sysadmin work, or
+              an internship that lets me touch real infrastructure — open to all.
             </p>
+            <div className="mt-6 mono text-[10px] uppercase tracking-widest text-bone/40 flex items-center gap-2">
+              <span className="led led-green" />
+              currently · on-shift · responding
+            </div>
           </div>
           <div className="col-span-12 md:col-span-8">
             <h2
               data-contact-line
               className="display text-[14vw] md:text-[10vw] leading-[0.9] text-bone"
             >
-              <span className="block overflow-hidden"><span className="block">Let's build</span></span>
-              <span className="block overflow-hidden"><span className="block italic text-acid">something</span></span>
-              <span className="block overflow-hidden"><span className="block">that thinks.</span></span>
+              <span className="block overflow-hidden"><span className="block">Open a</span></span>
+              <span className="block overflow-hidden"><span className="block italic text-acid">ticket.</span></span>
+              <span className="block overflow-hidden"><span className="block">I'll reply.</span></span>
             </h2>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-px bg-bone/10 border border-bone/10 rounded-3xl overflow-hidden mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-px bg-acid/15 border border-acid/15 overflow-hidden mb-12">
           {[
-            { l: 'Email', v: 'taranjeetsinghmatharu15@gmail.com', href: 'mailto:taranjeetsinghmatharu15@gmail.com' },
-            { l: 'Phone', v: '+1 (236) 632-8270', href: 'tel:+12366328270' },
+            { l: 'Email',    v: 'taranjeetsinghmatharu15@gmail.com', href: 'mailto:taranjeetsinghmatharu15@gmail.com' },
+            { l: 'Phone',    v: '+1 (236) 632-8270',                  href: 'tel:+12366328270' },
             { l: 'Location', v: 'Abbotsford, BC · Canada' },
           ].map((c) => (
             <div key={c.l} className="md:col-span-4 bg-ink p-8 md:p-10 group hover:bg-acid/5 transition-colors">
-              <div className="mono text-[10px] uppercase tracking-[0.3em] text-bone/40 mb-3">
+              <div className="mono text-[10px] uppercase tracking-[0.3em] text-bone/40 mb-3 flex items-center gap-2">
+                <span className="led led-green animate-led-blink" />
                 {c.l}
               </div>
               {c.href ? (
@@ -83,38 +90,46 @@ export default function Contact() {
           <input type="hidden" name="_subject" value="New inquiry from portfolio" />
           <input type="hidden" name="_template" value="table" />
 
+          <div className="md:col-span-2 mono text-[10px] uppercase tracking-[0.3em] text-acid">
+            &gt; new ticket · helpdesk@taran
+          </div>
+
           <input
             name="name"
-            placeholder="Your name"
+            placeholder="Requester name"
             required
             data-cursor="Type"
-            className="bg-bone/[0.03] border border-bone/15 text-bone placeholder-bone/30 px-6 py-5 rounded-2xl focus:outline-none focus:border-acid transition-colors mono text-sm"
+            className="bg-bone/[0.03] border border-acid/20 text-bone placeholder-bone/30 px-6 py-5 focus:outline-none focus:border-acid transition-colors mono text-sm"
           />
           <input
             type="email"
             name="email"
-            placeholder="Email"
+            placeholder="Reply-to email"
             required
             data-cursor="Type"
-            className="bg-bone/[0.03] border border-bone/15 text-bone placeholder-bone/30 px-6 py-5 rounded-2xl focus:outline-none focus:border-acid transition-colors mono text-sm"
+            className="bg-bone/[0.03] border border-acid/20 text-bone placeholder-bone/30 px-6 py-5 focus:outline-none focus:border-acid transition-colors mono text-sm"
           />
           <textarea
             name="message"
             rows={6}
-            placeholder="Describe the problem, idea, or system."
+            placeholder="Describe the issue / opportunity / role."
             required
             data-cursor="Type"
-            className="md:col-span-2 bg-bone/[0.03] border border-bone/15 text-bone placeholder-bone/30 px-6 py-5 rounded-2xl focus:outline-none focus:border-acid transition-colors mono text-sm resize-none"
+            className="md:col-span-2 bg-bone/[0.03] border border-acid/20 text-bone placeholder-bone/30 px-6 py-5 focus:outline-none focus:border-acid transition-colors mono text-sm resize-none"
           />
-          <div className="md:col-span-2 flex justify-end">
+          <div className="md:col-span-2 flex justify-between items-center flex-wrap gap-4">
+            <span className="mono text-[10px] uppercase tracking-widest text-bone/40 flex items-center gap-2">
+              <span className="led led-green animate-led-blink" />
+              SLA · reply within 24h
+            </span>
             <Magnetic strength={0.25}>
               <button
                 type="submit"
                 data-cursor="Send"
-                className="group inline-flex items-center gap-4 px-8 py-5 bg-acid text-ink mono text-xs uppercase tracking-widest font-bold rounded-full hover:gap-6 transition-all"
+                className="group inline-flex items-center gap-4 px-8 py-5 bg-acid text-ink mono text-xs uppercase tracking-widest font-bold hover:gap-6 transition-all"
               >
-                Send inquiry
-                <span className="w-2 h-2 rounded-full bg-ink group-hover:scale-150 transition-transform" />
+                Submit ticket
+                <span className="w-2 h-2 bg-ink group-hover:scale-150 transition-transform" />
               </button>
             </Magnetic>
           </div>

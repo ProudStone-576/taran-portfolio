@@ -3,11 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Magnetic from './Magnetic';
 
 const links = [
-  { href: '#about', label: 'About' },
-  { href: '#skills', label: 'Skills' },
-  { href: '#process', label: 'Process' },
-  { href: '#projects', label: 'Work' },
-  { href: '#contact', label: 'Contact' },
+  { href: '#about',      label: 'Profile' },
+  { href: '#skills',     label: 'Skills' },
+  { href: '#homelab',    label: 'Home.Lab' },
+  { href: '#process',    label: 'Process' },
+  { href: '#experience', label: 'Service' },
+  { href: '#projects',   label: 'Work' },
+  { href: '#contact',    label: 'Ticket' },
 ];
 
 export default function Navbar() {
@@ -34,19 +36,19 @@ export default function Navbar() {
           }`}
         >
           <div
-            className={`flex items-center justify-between rounded-full px-5 md:px-6 py-3 transition-all duration-500 ${
+            className={`flex items-center justify-between px-5 md:px-6 py-3 transition-all duration-500 border ${
               scrolled
-                ? 'bg-ink/70 backdrop-blur-xl border border-bone/10'
-                : 'bg-transparent border border-transparent'
+                ? 'bg-ink/80 backdrop-blur-xl border-acid/20'
+                : 'bg-transparent border-transparent'
             }`}
           >
             <a href="#home" data-cursor="Top" className="flex items-center gap-3 group">
-              <span className="relative w-7 h-7 rounded-full bg-acid flex items-center justify-center">
-                <span className="absolute inset-0 rounded-full bg-acid animate-ping opacity-50" />
-                <span className="relative w-2 h-2 rounded-full bg-ink" />
+              <span className="relative w-7 h-7 bg-acid flex items-center justify-center">
+                <span className="absolute inset-0 bg-acid animate-ping opacity-50" />
+                <span className="relative w-2 h-2 bg-ink" />
               </span>
               <span className="mono text-xs uppercase tracking-[0.25em] text-bone group-hover:text-acid transition-colors">
-                Taran<span className="text-bone/40">.M</span>
+                taran<span className="text-bone/40">.matharu</span>
               </span>
             </a>
 
@@ -71,10 +73,10 @@ export default function Navbar() {
                   href="/Taran_Matharu_resume.pdf"
                   target="_blank"
                   data-cursor="PDF"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-bone text-ink mono text-xs uppercase tracking-widest font-bold rounded-full hover:bg-acid transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-acid text-ink mono text-xs uppercase tracking-widest font-bold hover:bg-bone transition-colors"
                 >
-                  Resume
-                  <span className="block w-1.5 h-1.5 rounded-full bg-ink" />
+                  resume.pdf
+                  <span className="block w-1.5 h-1.5 bg-ink" />
                 </a>
               </Magnetic>
             </div>
@@ -120,7 +122,7 @@ export default function Navbar() {
                   <a
                     href={l.href}
                     onClick={() => setOpen(false)}
-                    className="display text-6xl text-bone hover:text-acid transition-colors"
+                    className="display text-5xl text-bone hover:text-acid transition-colors"
                   >
                     {l.label}
                   </a>
@@ -136,9 +138,9 @@ export default function Navbar() {
                 <a
                   href="/Taran_Matharu_resume.pdf"
                   target="_blank"
-                  className="mono text-xs uppercase tracking-widest border border-bone/30 px-5 py-3 rounded-full"
+                  className="mono text-xs uppercase tracking-widest border border-acid/40 px-5 py-3"
                 >
-                  Resume ↗
+                  resume.pdf ↗
                 </a>
               </motion.li>
             </motion.ul>

@@ -31,8 +31,9 @@ export default function Loader() {
           <div className="absolute inset-0 noise-bg opacity-[0.04]" />
 
           <div className="relative flex flex-col items-center gap-8 px-6">
-            <div className="mono text-xs uppercase tracking-[0.4em] text-bone/60">
-              Initializing system
+            <div className="mono text-xs uppercase tracking-[0.4em] text-acid flex items-center gap-3">
+              <span className="led led-green animate-led-blink" />
+              booting · noc · contoso.lab
             </div>
 
             <div className="display text-[18vw] sm:text-[14vw] md:text-[10vw] leading-none text-bone">
@@ -48,7 +49,7 @@ export default function Loader() {
             </div>
 
             <div className="mono text-[10px] text-bone/40 uppercase tracking-widest">
-              taran.matharu / portfolio.v2
+              taran.matharu / it-support / v4
             </div>
           </div>
         </motion.div>

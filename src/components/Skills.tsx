@@ -2,18 +2,48 @@ import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
-  FaBrain, FaChartLine, FaDatabase, FaServer, FaWaveSquare, FaCogs,
+  FaWindows, FaNetworkWired, FaHeadset, FaServer, FaTerminal, FaShieldAlt,
 } from 'react-icons/fa';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const skills = [
-  { i: <FaBrain />, t: 'Machine Learning', d: 'Model design, training, evaluation, deployment.', k: ['PyTorch', 'sklearn', 'XGBoost'] },
-  { i: <FaChartLine />, t: 'Data Analytics', d: 'Statistical modeling, dashboards, decision systems.', k: ['Pandas', 'Polars', 'Tableau'] },
-  { i: <FaDatabase />, t: 'Data Pipelines', d: 'ETL, orchestration, schema design at scale.', k: ['SQL', 'Airflow', 'dbt'] },
-  { i: <FaServer />, t: 'Backend APIs', d: 'Service design, REST, integration.', k: ['Flask', 'FastAPI', 'Node'] },
-  { i: <FaWaveSquare />, t: 'Time-Series', d: 'Volatility regimes, regime-switching models, forecasting.', k: ['ARIMA', 'GARCH', 'Neural ODE'] },
-  { i: <FaCogs />, t: 'Automation', d: 'Reporting, monitoring, scripted workflows.', k: ['Python', 'Bash', 'CI/CD'] },
+  {
+    i: <FaWindows />,
+    t: 'OS & Desktop',
+    d: 'Win 7/10/11, Win Server, Ubuntu, macOS — image, deploy, repair.',
+    k: ['Windows 11', 'Server 2022', 'Ubuntu', 'macOS', 'MDT'],
+  },
+  {
+    i: <FaServer />,
+    t: 'Servers & Directory',
+    d: 'AD, Group Policy, DNS, DHCP, file shares, M365 admin.',
+    k: ['Active Directory', 'GPO', 'DNS', 'DHCP', 'M365'],
+  },
+  {
+    i: <FaNetworkWired />,
+    t: 'Networking',
+    d: 'TCP/IP, VLAN segmentation, VPN, firewall config, remote support.',
+    k: ['TCP/IP', 'VLAN', 'VPN', 'pfSense', 'RDP/SSH'],
+  },
+  {
+    i: <FaHeadset />,
+    t: 'Help Desk',
+    d: 'Ticket triage, escalation, end-user training, runbook docs.',
+    k: ['Jira', 'Freshdesk', 'GLPI', 'ServiceNow', 'SLA'],
+  },
+  {
+    i: <FaTerminal />,
+    t: 'Scripting & Automation',
+    d: 'PowerShell, Bash, Python — provisioning, reporting, scheduled jobs.',
+    k: ['PowerShell', 'Bash', 'Python', 'SQL', 'Git'],
+  },
+  {
+    i: <FaShieldAlt />,
+    t: 'Endpoint & Security',
+    d: 'Patching (WSUS), AV/EDR, backup verify, account hygiene.',
+    k: ['WSUS', 'Defender', 'Veeam', 'BitLocker', '2FA'],
+  },
 ];
 
 export default function Skills() {
@@ -53,11 +83,12 @@ export default function Skills() {
       <div className="px-5 md:px-10 pt-32 md:pt-44 pb-12 md:pb-20">
         <div className="max-w-[1500px] mx-auto flex items-end justify-between flex-wrap gap-6">
           <div>
-            <div className="mono text-[10px] uppercase tracking-[0.4em] text-acid mb-4">
-              ◉ 03 — Capability
+            <div className="mono text-[10px] uppercase tracking-[0.4em] text-acid mb-4 flex items-center gap-3">
+              <span className="led led-green animate-led-blink" />
+              ◉ 03 — capability.matrix
             </div>
             <h2 className="display text-5xl md:text-7xl text-bone leading-[0.95]">
-              What I can <span className="italic">build.</span>
+              What I can <span className="italic text-acid">support.</span>
             </h2>
           </div>
           <div className="mono text-xs text-bone/40 max-w-xs uppercase tracking-widest">
@@ -74,17 +105,18 @@ export default function Skills() {
         {skills.map((s, i) => (
           <article
             key={s.t}
-            className="snap-start shrink-0 w-[80vw] sm:w-[60vw] md:w-[420px] lg:w-[480px] h-[60vh] md:h-[520px] relative group bg-bone/[0.02] border border-bone/10 rounded-3xl p-8 md:p-10 flex flex-col justify-between overflow-hidden hover:border-acid/40 transition-colors duration-500"
+            className="snap-start shrink-0 w-[80vw] sm:w-[60vw] md:w-[420px] lg:w-[480px] h-[60vh] md:h-[520px] relative group bg-bone/[0.02] border border-acid/15 rounded-none p-8 md:p-10 flex flex-col justify-between overflow-hidden hover:border-acid transition-colors duration-500 scanlines"
             data-cursor=""
           >
             <div className="absolute -top-20 -right-20 w-72 h-72 bg-acid/[0.04] rounded-full blur-3xl group-hover:bg-acid/10 transition-colors duration-700" />
 
             <div className="relative">
               <div className="flex items-center justify-between mb-12">
-                <span className="mono text-[10px] uppercase tracking-[0.3em] text-bone/40">
-                  {String(i + 1).padStart(2, '0')} / {String(skills.length).padStart(2, '0')}
+                <span className="mono text-[10px] uppercase tracking-[0.3em] text-bone/40 flex items-center gap-2">
+                  <span className="led led-green" />
+                  cap.{String(i + 1).padStart(2, '0')} / {String(skills.length).padStart(2, '0')}
                 </span>
-                <span className="text-3xl text-bone/40 group-hover:text-acid transition-colors duration-500">
+                <span className="text-3xl text-acid/60 group-hover:text-acid transition-colors duration-500">
                   {s.i}
                 </span>
               </div>
@@ -99,7 +131,7 @@ export default function Skills() {
               {s.k.map((k) => (
                 <span
                   key={k}
-                  className="mono text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-full border border-bone/15 text-bone/60"
+                  className="mono text-[10px] uppercase tracking-widest px-3 py-1.5 border border-acid/20 text-bone/70 hover:border-acid hover:text-acid transition-colors"
                 >
                   {k}
                 </span>

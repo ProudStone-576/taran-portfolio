@@ -1,3 +1,5 @@
+
+
 import { useEffect, useRef, useState } from 'react';
 
 const SELECTOR = 'a, button, [data-cursor], input, textarea';

@@ -7,63 +7,67 @@ gsap.registerPlugin(ScrollTrigger);
 const projects = [
   {
     n: '01',
-    title: 'Motor Unit Degeneration Simulator',
-    tag: 'Research · Neural ODE',
+    title: 'Windows Server Home Lab',
+    tag: 'Sysadmin · AD · pfSense',
     description:
-      'Hybrid mechanistic + Neural ODE simulator for studying motor unit degeneration, intervention timing, and non-identifiability under explicit assumptions.',
-    tech: ['Neural ODE', 'Python', 'Scientific ML'],
-    link: 'https://github.com/ProudStone-576/motor-unit-degeneration-simulator',
+      'Self-built multi-VM lab on Proxmox: Windows Server domain controller (AD, DNS, DHCP, GPO), domain-joined clients, pfSense firewall with VLAN segmentation, self-hosted help-desk and monitoring stack. Documented as step-by-step runbooks.',
+    tech: ['Proxmox', 'Windows Server', 'Active Directory', 'pfSense', 'VLAN'],
+    link: '#homelab',
     accent: 'acid',
     size: 'lg',
   },
   {
     n: '02',
-    title: 'Volatility Regime Engine',
-    tag: 'Finance · Time-Series',
+    title: 'PowerShell Onboarding Toolkit',
+    tag: 'Automation',
     description:
-      'ML pipeline detecting volatility regimes via rolling statistics and market state transitions for risk analysis.',
-    tech: ['Time Series', 'ML', 'Finance'],
-    link: 'https://github.com/ProudStone-576/volatility-regime-engine',
-    accent: 'plasma',
+      'Scripts that provision a new starter end-to-end — AD account, group membership, M365 license, home drive, manager notification — in under 15 seconds vs ~20 minutes manual.',
+    tech: ['PowerShell', 'AD Module', 'Graph API'],
+    link: 'https://github.com/ProudStone-576',
+    accent: 'amber',
     size: 'md',
   },
   {
     n: '03',
-    title: 'Real-time Sudoku Vision Solver',
-    tag: 'Computer Vision',
-    description: 'Detects Sudoku grids in real-time and solves via backtracking under live video constraints.',
-    tech: ['OpenCV', 'Python', 'Algorithms'],
-    link: 'https://github.com/ProudStone-576/realtime-sudoku-vision-solver',
+    title: 'Bash Maintenance Suite',
+    tag: 'Linux · Cron',
+    description:
+      'Set of Bash scripts for log rotation, backup verification, certificate expiry checks, disk usage alerts. Saved ~20h/wk at ONeID.',
+    tech: ['Bash', 'cron', 'systemd', 'rsync'],
+    link: 'https://github.com/ProudStone-576',
     accent: 'bone',
     size: 'sm',
   },
   {
     n: '04',
-    title: 'AI Solution Evaluation System',
-    tag: 'Systems',
-    description: 'MySQL-based platform managing AI tasks, solutions, feedback, ratings, automated evaluations.',
-    tech: ['MySQL', 'System Design', 'AI Eval'],
-    link: 'https://github.com/ProudStone-576/ai-solution-evaluation-system',
+    title: 'GPO Hardening Baseline',
+    tag: 'Endpoint Security',
+    description:
+      'Group Policy baseline applied to the lab: AppLocker rules, BitLocker enforcement, audit logging, USB control. Validated against CIS benchmarks.',
+    tech: ['GPO', 'AppLocker', 'BitLocker', 'CIS'],
+    link: '#homelab',
     accent: 'cobalt',
     size: 'md',
   },
   {
     n: '05',
-    title: 'Bulldozer Price Prediction',
-    tag: 'Deep Learning · Tabular',
-    description: 'TensorFlow neural network predicting bulldozer auction prices on structured tabular data.',
-    tech: ['TensorFlow', 'Neural Net', 'Regression'],
-    link: 'https://github.com/ProudStone-576/Bulldozer-price-prediction-model',
+    title: 'Help-Desk KB',
+    tag: 'Documentation',
+    description:
+      'Markdown knowledge base — common Outlook, VPN, printer, AD lockout fixes. Each article includes user-facing summary + tech-facing recipe.',
+    tech: ['Markdown', 'Wiki.js', 'Mermaid'],
+    link: '#',
     accent: 'bone',
     size: 'sm',
   },
   {
     n: '06',
-    title: 'Heart Disease Prediction',
-    tag: 'Healthcare ML',
-    description: 'Supervised learning for heart disease risk on clinical data with validated metrics.',
-    tech: ['Classification', 'Healthcare', 'Python'],
-    link: 'https://github.com/ProudStone-576/Heart-Disease-Model',
+    title: 'Network Monitoring Dashboard',
+    tag: 'Observability',
+    description:
+      'Zabbix + Grafana stack monitoring the lab — host availability, switch port utilisation, certificate expiry, backup job status. Email alerts on threshold.',
+    tech: ['Zabbix', 'Grafana', 'SNMP'],
+    link: '#homelab',
     accent: 'acid',
     size: 'md',
   },
@@ -71,7 +75,7 @@ const projects = [
 
 const accentMap: Record<string, string> = {
   acid: 'group-hover:bg-acid group-hover:text-ink',
-  plasma: 'group-hover:bg-plasma group-hover:text-ink',
+  amber: 'group-hover:bg-amber group-hover:text-ink',
   cobalt: 'group-hover:bg-cobalt group-hover:text-bone',
   bone: 'group-hover:bg-bone group-hover:text-ink',
 };
@@ -105,21 +109,22 @@ export default function ProjectsSection() {
     <section
       ref={root}
       id="projects"
-      className="relative py-32 md:py-44 px-5 md:px-10 bg-ink overflow-hidden border-t border-bone/5"
+      className="relative py-32 md:py-44 px-5 md:px-10 bg-ink overflow-hidden border-t border-acid/15"
     >
       <div className="max-w-[1500px] mx-auto scroll-skew">
         <div className="grid grid-cols-12 gap-y-12 md:gap-x-10 mb-16 md:mb-24">
           <div className="col-span-12 md:col-span-7">
-            <div className="mono text-[10px] uppercase tracking-[0.4em] text-acid mb-4">
-              ◉ 05 — Selected Work
+            <div className="mono text-[10px] uppercase tracking-[0.4em] text-acid mb-4 flex items-center gap-3">
+              <span className="led led-green animate-led-blink" />
+              ◉ 07 — projects.deployed
             </div>
             <h2 className="display text-6xl md:text-[8vw] text-bone leading-[0.9]">
-              Things I've <span className="italic text-acid">shipped.</span>
+              Things I've <span className="italic text-acid">built.</span>
             </h2>
           </div>
           <div className="col-span-12 md:col-span-4 md:col-start-9 self-end">
             <p className="text-bone/70 leading-relaxed">
-              Each project is selected not for quantity, but for what it proves about how I think and build.
+              Hands-on infra and tooling — built to actually run, not to look good on a slide.
             </p>
             <a
               href="https://github.com/ProudStone-576"
@@ -137,15 +142,16 @@ export default function ProjectsSection() {
             <a
               key={p.n}
               href={p.link}
-              target="_blank"
+              target={p.link.startsWith('http') ? '_blank' : undefined}
               data-card
               data-parallax-vel
               data-cursor="Open"
               style={{ ['--vel-mul' as never]: ((idx % 3) - 1) * 1.4 + 0.4 }}
-              className={`relative group bg-bone/[0.02] border border-bone/10 rounded-3xl overflow-hidden p-7 md:p-9 flex flex-col justify-between transition-colors duration-500 ${sizeMap[p.size]} ${accentMap[p.accent]}`}
+              className={`relative group bg-bone/[0.02] border border-acid/15 overflow-hidden p-7 md:p-9 flex flex-col justify-between transition-colors duration-500 ${sizeMap[p.size]} ${accentMap[p.accent]}`}
             >
               <div className="flex items-center justify-between">
-                <span className="mono text-[10px] uppercase tracking-[0.3em] text-bone/40 group-hover:text-current transition-colors">
+                <span className="mono text-[10px] uppercase tracking-[0.3em] text-bone/40 group-hover:text-current transition-colors flex items-center gap-2">
+                  <span className="led led-green animate-led-blink" />
                   {p.n} · {p.tag}
                 </span>
                 <span className="text-2xl text-bone/30 group-hover:text-current group-hover:rotate-45 transition-all duration-500">
@@ -165,7 +171,7 @@ export default function ProjectsSection() {
                   {p.tech.map((t) => (
                     <span
                       key={t}
-                      className="mono text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-full border border-bone/15 text-bone/60 group-hover:border-current/30 group-hover:text-current transition-colors"
+                      className="mono text-[10px] uppercase tracking-widest px-2.5 py-1 border border-bone/15 text-bone/60 group-hover:border-current/30 group-hover:text-current transition-colors"
                     >
                       {t}
                     </span>
