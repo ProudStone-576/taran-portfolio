@@ -1,55 +1,57 @@
-# React + TypeScript + Vite
+# Portfolio Website
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+My personal portfolio: a single-page, scroll-driven site built with React, TypeScript and Vite. It covers who I am, my skills, a home lab, how I work, my experience and selected projects, with a contact section at the end.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Sections: Hero, About, Skills, Home Lab, Process, Experience, Projects, Contact
+- Smooth scrolling (Lenis) and scroll-triggered animation (GSAP, Framer Motion)
+- A WebGL hero shader and 3D elements (three.js through React Three Fiber)
+- Custom cursor, magnetic text and buttons, text scramble and word-reveal effects
+- Syntax-highlighted code panel (Prism)
+- Downloadable resume (PDF)
 
-## Expanding the ESLint configuration
+## Tech stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+| Area | Choice |
+|---|---|
+| Framework | React 19, TypeScript, Vite |
+| Styling | Tailwind CSS 3 |
+| Animation | GSAP, Framer Motion, Lenis |
+| 3D | three.js, `@react-three/fiber`, `@react-three/drei` |
+| Icons | lucide-react, react-icons |
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Getting started
+
+Requires Node.js 20 or newer.
+
+```bash
+git clone https://github.com/ProudStone-576/website-portfolio.git
+cd website-portfolio
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open the local URL that Vite prints (usually http://localhost:5173).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Command | What it does |
+|---|---|
+| `npm run dev` | Start the dev server with hot reload |
+| `npm run build` | Type-check and create a production build in `dist/` |
+| `npm run preview` | Serve the production build locally |
+| `npm run lint` | Run ESLint |
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+## Project structure
+
 ```
-"# website-portfolio" 
+src/
+  App.tsx          Page composition: the order of the sections
+  components/      One component per section, plus effects (cursor, loader, shader, scroll)
+  assets/          Resume PDF
+  index.css        Tailwind layers and custom styles
+public/            Static files
+```
+
+## Deployment
+
+It is a static site, so `npm run build` output in `dist/` can be hosted anywhere, for example Vercel or Netlify.
